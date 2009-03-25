@@ -1,0 +1,148 @@
+# Copyright 2009 Daniel Bush
+#
+# This file is part of SIFS (simple include-file system).
+# SIFS is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+#
+# You are free to use or modify SIFS as you please.
+
+
+sifs.help() {
+  less <<-EOF
+
+   Functions: 
+
+   sifs.conf                  - Edit SIFS_HOME/sifs.conf
+   sifs.template [file_name]  - Create an a sif file from template in current directory
+   sifs.edit           - Edit the SIFS_HOME/sifs.sh
+   sifs.add file_name  - runs sifs.template and puts it in \$SIFS_DIR
+
+   General rules for writing include files (not the master include file):
+
+   0) Some function names and ENV variable names are RESERVED by SIFS_HOME/sifs.sh.
+      Refer to the 'hh' function in sifs.sh.
+   1) Use a standard set of function names
+   - go      synonym for cd or pushd/popd
+   - choose  'select' is a shell reserved word
+   - show    show something eg maybe specific ENV variables etc)
+             Generally, should just dump to screen without a PAGER
+   - h       general help function; also, print ENV; use less as PAGER
+             Help format should include a list of the functions and
+             a sentence describing what they do.
+             If you do this, don't bother to repeat the comment
+             before the function.  In other words: DESCRIBE THE FUNCTIONS
+             IN THE HELP SECTION AND NOT IN FRONT OF THE FUNCTIONS THEMSELVES.
+             Put your h() function near the top of the include so
+             it doubles as code documentation.
+   - edit    edit a project file
+             (Note: the SIFS_HOME/sifs.sh defines 'e', which will edit the current include file).
+   - run     do something
+   - build
+   - change
+   - list
+   - setup
+   - start|stop|restart|reload
+   - check   synonym for 'test' etc
+   - update
+   - log
+   - option/s
+   - reference
+   2) Use a standard set of ENV variables
+      HOME - every include file can set a HOME variable.
+      SIFS keeps track of your original HOME in OLD_HOME and will
+      restore it if you press 'r'.
+   3) Use namespacing if you want to load more than one include file
+      at the same time
+
+  NAMESPACING
+
+  Idea: be able to include several heterogeneous sif files and use their
+  functionality simultaneously without explicitly changing into them everytime.
+  You'd first change into each one ('c') to load them into your system.
+  How would we do this to avoid clashes?
+  Use a prefix.  
+  Suppose we have mysql and postgres sif files.
+  We use the prefixes my and pg respectively.
+  For shell and environment variables
+    PG_VAR1=...
+    MY_VAR1=...
+  For functions:
+    pg.func1() {
+     ...
+    my.func1() {
+     ...
+  Help files will need to be redefined:
+    pg.h()
+    my.h()
+  So in the pg sif file, h() would be defined as:
+    h() {
+      pg.h
+    }
+  To make it even clearer that prefixing is being performed we might name the
+  sif files accordingly:
+    \$SIFS_DIR/pg.project1.sif
+    \$SIFS_DIR/my.project1.sif
+  SIFS_ , sifs. , SIF_ and sif. are reserved prefixes.
+
+EOF
+}
+
+sifs.conf() {
+  $EDITOR $SIFS_HOME/sifs.conf
+}
+
+sifs.edit() {
+  $EDITOR $SIFS_HOME/sifs.sh
+}
+
+sifs.template() {
+  file_name=new_file.sif
+  test -n "$1" && file_name=$1.sif
+  if test -e "$file_name"; then
+    echo "$file_name already exists - delete or rename it."
+    read tmp  # Pause here.
+  else
+
+    cat <<-EF >$file_name
+h() {
+less <<-EOF
+
+  [Title here]
+
+  Variables:
+  HOME: \$HOME
+  VAR1: \$VAR1
+
+  Functions:
+  func1           - Describe func1
+
+EOF
+    }
+HOME=     # Set or remove
+VAR1=var1 # Set or remove
+
+func1() {
+  foo=
+}
+
+EF
+
+    echo "Created $file_name"
+    echo "Edit it? [y] "
+    read resp
+    case "$resp" in
+    n|N|no|NO|No) ;;
+    *) $EDITOR $file_name ;;
+    esac
+  fi
+
+}
+
+sifs.add() {
+  if test -z "$SIFS_DIR"; then
+    echo "SIFS_DIR not set."
+    return 1
+  fi
+  sifs.template $SIFS_DIR/$1
+}

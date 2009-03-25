@@ -1,0 +1,268 @@
+# Copyright 2009 Daniel Bush
+#
+# This file is part of SIFS (simple include-file system).
+# SIFS is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+#
+# You are free to use or modify SIFS as you please.
+
+
+     _  __     
+ ___(_)/ _|___ 
+/ __| | |_/ __|
+\__ \ |  _\__ \
+|___/_|_| |___/
+               
+GENERAL HELP FILE FOR SIFS
+
+
+WHAT IS SIFS?
+
+SIFS stands for:  shell "include file" system
+An "include file" is a file you source into your current interactive shell
+like so:
+   % . some_file
+You could also include it into a non-interactive shell, but be aware that some
+commands defined within that file may be designed to expect user interactivity.
+SIFS does the following:
+1) facilitates the process of including files especially in interactive
+   shells.  
+2) is a set of conventions about how these included files should be structured
+   We call the include files "sif files" and we store them in one or more
+   sif repositories (a directory which is referred to by the shell 
+   variable SIFS_DIR).
+   A simple file sifs.sh in conjunction with sifs.conf act as the glue
+   allowing you to switch between sif repositories and between sif files
+   in those repositories.
+3) currently assumes you're running bash.
+
+WHY SIFS? GENERAL PHILOSOPHY
+
+The command-line is a powerful tool.
+SIFS is meant for people who do a lot of things from the command-line usually
+on linux or unix systems.
+SIFS is so simple you could easily implement it yourself.  To this extent,
+this software is just expressing a simple idea but it is one that has helped
+me to organize and handle more complexity in my daily jobs.
+
+The sifs system serves to
+1) group related (often administrative) shell functions together which are run
+   from the shell or command-line.  If you login and administer lots of machines
+   each running their own sets of complex systems, this can be a boon.
+2) make it easier and faster to run and remember commands and complex sequences of
+   commands from the command-line; also to move around the file system from one 
+   central location to another relatively easily
+   (For instance you might implement a 'go' shell function in a sif file and have it
+   take several options: go logs; go db; go; etc
+3) document systems and procedures and locations (often administrative / sysadmin)
+   and facilitate proper execution of processes by staff or simply yourself (in
+   the case of a personal setup)
+   You could embed checksheets or explanatory notes.  The existing functions and
+   shell variables already document what you are doing to some degree and this
+   is all tied together in a self-documenting help function that is accessed using
+   the 'h' key.
+4) Rapid editing/feedback; one of the sifs commands ('e') allows you to edit
+   the currently loaded sif file.  I'll often suspend it in bash (ctrl-z) and
+   then bring it up (fg) as I feel the need to update it.
+5) keep it simple; apart from sourcing files, using bash functions and doing the
+   occasional 'select' we aren't doing anything too clever.
+
+
+GETTING STARTED
+
+0) Select where you want to install sifs - this is represented by the shell
+variable SIFS_HOME.  Unpack the sifs system to SIFS_HOME.
+You should see files like:
+  $SIFS_HOME/includes
+  $SIFS_HOME/sifs.sh
+and several other things.
+
+1) In your .bashrc (or similar) add these lines:
+      EDITOR=vim # Or whatever you prefer.
+      export SIFS_HOME=/path/to/sifs
+      . $SIFS_HOME/sifs.sh
+/path/to/sifs could be /etc/sifs or  /home/<user>/sifs etc.
+Make sure you set EDITOR to your favorite editor.
+
+2) Set up at least one sif file repository (SIFS_DIR).  This is a directory
+   containing .sif files.  You set one up by making the directory and then
+   appending its absolute location in SIFS_HOME/sifs.conf
+   This directory should probably not be SIFS_HOME or inside SIFS_HOME.
+
+3) Start creating sifs files; use .sif extension to signify the 
+   file is a sif file ie is part of a sifs system.
+   Sif files follow a specifc format - see SIF FILE FORMAT below.
+
+   Refer to SIFS_HOME/edit.sif or run
+     % sifs.help
+
+   The command:
+     % sifs.template
+   creates a template in the current directory.
+
+   This creates template called filename.
+     % sifs.template filename
+
+   This will create template in your current sif repository (SIFS_DIR):
+     % sifs.add filename
+
+   A sif file is really a bash script file; by using .sif you are saying it is
+   a particular type of shell file following some basic conventions.
+
+4) If you want to locate some of your sif files elsewhere (/x/y/z)
+   then update sifs.conf with a new entry:
+      /x/y/z/sifs
+   and move/create the relevant sif files there
+     % cp your_file.sif /x/y/z/sifs/your_file.sif
+
+5) To load a sif file type 'c' and follow the prompts.
+   The 'd' key switches between sif repositories 
+   (ie entries on sifs.conf aka SIFS_DIR).
+   Most sif file will include a help function which you
+   access with 'h'.
+   The SIFS_HOME/sifs.sh file also has a help function
+   which you access with 'hh'.
+   To edit the sif file type 'e'.
+   To reload a sif file (if you've made changes), type 'i'.
+   That's pretty much it.
+   It's up to you to define the rest of your sif file - see points above.
+   To change repo, either type 'r' then 'c' or type 'd' then 'c'.
+   The former is probably the quickest.
+
+
+SIF FILE FORMAT
+
+Every .sif file you create should follow a standard format.
+See SIFS_HOME/edit.sif, type:
+  % sifs.help
+and the sifs.template function.
+Run:
+  % sifs.template 
+and look at the output.
+
+But briefly:
+1) At the top, create an h() function.
+2) In the h() function, document the variables and functions in this file.
+   At the end, include any extra sections or details.
+3) Next set up your variables
+   You don't have to define a 'home' on the file system that your
+   sif file will refer to however SIFS assumes you want to change HOME in your
+   .sif file.  This means commands like 'cd' will take you this directory.
+   If you don't want to do this, you can define your own HOME using
+   another variable eg MY_HOME and create a function 'go'.
+     go() {
+       cd $MY_HOME
+     }
+4) Then define your functions
+5) Apart from variable setting and maybe some error checking code, sifs files
+   shouldn't really execute anything when you source or run them
+      % . some_file.sif     # No action
+      % bash some_file.sif  # No action
+   All the action is stored in function definitions and variables which are 
+   loaded into your current shell (using the first form above).
+   It generally only makes sense to source a sif either into a script or
+   into your current shell.
+
+Example format:
+
+    h() {
+    less <<-EOF
+
+    HOME: $HOME
+    VAR1: $VAR1
+    ...
+
+    func1 [arg1]  - Does x ...
+    func2  arg1   - Does y ...
+
+    ...
+    EF
+    }
+
+    VAR1=...
+    VAR2=...
+
+    func1() {
+    ...
+    }
+
+    func2() {
+    ...
+    }
+
+RUNNING AUTOMATED SIFS SCRIPTS
+
+Locate individual .sif files and just source them directly into your shell script.
+   ...
+   . /x/y/z/sifs/some_file.sif
+   ...
+   ...
+Note: the job of SIFS_HOME/sifs.sh is to provide interactive assistance in
+switching between sif files, something that is not needed for automated
+processes.
+
+SIFS AND SCREEN
+
+If you want to load the sifs system up into screen, here is one way (note it
+is the only way I've found so far, but it works well enough).
+
+In your screen.conf have something like:
+
+  ...
+  setenv SCREEN_HOME /home/user
+
+  chdir $SCREEN_HOME
+  setenv SCREEN_SIFS /home/user/sifs/blogger.sif
+  screen -t blogger  0 bash --init-file /home/user/screen.boot.sifs
+
+  chdir /home/user
+  screen -t title2  1
+  ...
+
+In  /home/user/screen.boot.sifs, have something like:
+
+  . /home/danb/.bashrc
+  c $SCREEN_SIFS
+  cd
+
+Then invoke screen:
+  % screen -c screen.test
+
+The first screen window should have a title 'blogger' and it
+should have i) loaded the sifs system; ii) selected the blogger.sif
+file.  The second window ('title2') will just be a normal shell.
+
+Note, we ran bash with an init file; the init file source .bashrc
+which makes it more like a login shell; this included the sifs 
+system setup.  We then ran the 'c' function with an argument.
+
+
+EXTENDING SIFS
+
+1) Switching to another SIFS system
+   Not implemented.  But to do it, you just need to change SIFS_HOME and then
+   include SIFS_HOME/sifs.sh.  Run 'r' before you do this to reset your HOME to
+   OLD_HOME.
+   Really, sifs is very simple; you only need one system; to access new files,
+   just update your sifs.conf.
+   Several people could have different sifs systems with different sifs.conf's 
+   both using public .sif repositories and private ones.
+
+2) sif groups
+   Instead of a large_project.sif file, you create 
+   large_project.sif/
+   and put several smaller .sif files within it.
+   When you type 'c' to change to large_project you get to choose which
+   of the several smaller files to include.
+   large_project.sif/_* files might get included automatically when you
+   change in.
+   Not implemented.  Not sure this extra complexity is warranted.
+
+
+AUTHOR
+Daniel Bush -  dlb.id.au@gmail.com
+
+DATE
+Wed Mar 25 10:33:45 EST 2009
+

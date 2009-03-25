@@ -1,0 +1,10 @@
+# Copy this file to sifs.conf in the same location.
+#
+# List sif repositories here.
+# These are directories which contain your .sif files.
+#
+# Comments must go on separate lines.
+# Avoid any leading, trailing or unnecessary spacing.
+
+# Example:
+#/home/username/sifs
