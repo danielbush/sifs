@@ -64,6 +64,7 @@ less <<-EOF
                automatically if SIFS_DIR is not set.
   c            Source an include file from SIFS_HOME/includes and SIFS_HOME/sifs.conf.
                This is the main way to change includes.
+  c [name]     Run 'c' with name of sif file (should be absolute path with .sif included).
   e            Edit the current included file.
   r            Reset sifs and your shell; basically set HOME to OLD_HOME (your original HOME).
   rc           shortcut for running 'r' then 'c'; use this to change to a sif file in a different
