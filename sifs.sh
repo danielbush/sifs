@@ -77,7 +77,6 @@ EOF
 
 
 export OLD_HOME=$HOME
-export EDITOR=vim
 # TODO: Set bash history and similar to use OLD_HOME settings ? -- DBush 25-Mar-09
 
 
