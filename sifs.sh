@@ -138,7 +138,7 @@ c() {
   echo "Using $SIFS_DIR"
   echo
   echo "Type q to quit"
-  select i in $(ls|sed -e 's/\.sif$//'); do
+  select i in $(ls|grep '\.sif$'|sed -e 's/\.sif$//'); do
     if test "$REPLY" = "q"; then
       break
     fi
