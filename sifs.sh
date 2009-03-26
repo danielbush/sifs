@@ -50,20 +50,19 @@ less <<-EOF
   Locations:
 
   SIFS_HOME/sifs.sh   - The main sifs file which should be loaded into your system at login
-  SIFS_HOME/sifs.conf - Store locations of other sif files besides SIFS_HOME/includes.
-  SIFS_HOME/includes  - Central place to stash your .sif files.
-                        If SIFS_HOME is personal eg /home/danb, then these could be your own
-                        include files; if SIFS_HOME is something like /etc/sifs, then these are
-                        probably system related files etc etc
-
+  SIFS_HOME/sifs.conf - Store locations of sif files
+                        eg /home/user/sifs
+                        Containing:
+                         - /home/user/sifs/project1.sif
+                         - etc
+                        eg /etc/sifs
 
   Functions (RESERVED names)
   hh           Output this help message.
   i            Re-source the current include file and print its location
   d            Select a sifs location by setting SIFS_DIR. 'c' will run this
                automatically if SIFS_DIR is not set.
-  c            Source an include file from SIFS_HOME/includes and SIFS_HOME/sifs.conf.
-               This is the main way to change includes.
+  c            Source an include file from SIFS_DIR
   c [name]     Run 'c' with name of sif file (should be absolute path with .sif included).
   e            Edit the current included file.
   r            Reset sifs and your shell; basically set HOME to OLD_HOME (your original HOME).
