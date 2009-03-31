@@ -146,14 +146,20 @@ But briefly:
 2) In the h() function, document the variables and functions in this file.
    At the end, include any extra sections or details.
 3) Next set up your variables
-   You don't have to define a 'home' on the file system that your
-   sif file will refer to however SIFS assumes you want to change HOME in your
-   .sif file.  This means commands like 'cd' will take you this directory.
-   If you don't want to do this, you can define your own HOME using
-   another variable eg MY_HOME and create a function 'go'.
+   Set up a 'home' variable.
+   You can either use HOME but beware that settings for your programs may
+   be stored in the new HOME directory.
+   SIFS records the previous HOME as OLD_HOME which is reverted to when you
+   type 'r'.
+   Or, you can create your own 'home' variable directory.  The sifs.template function
+   assumes the latter and uses MY_HOME with a 'go' function.
      go() {
-       cd $MY_HOME
+       case "$1" in
+       *) cd $MY_HOME;;
+       esac
      }
+   Set up other variables as needed. This depends on what you're doing.  It 
+   should be fairly obvious what is worth stashing as a variable and what isn't.
 4) Then define your functions
 5) Apart from variable setting and maybe some error checking code, sifs files
    shouldn't really execute anything when you source or run them

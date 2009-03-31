@@ -49,9 +49,14 @@ sifs.help() {
    - option/s
    - reference
    2) Use a standard set of ENV variables
-      HOME - every include file can set a HOME variable.
-      SIFS keeps track of your original HOME in OLD_HOME and will
-      restore it if you press 'r'.
+      HOME - you can change HOME if you want, but beware that personal settings
+             will be made in this location.
+             SIFS keeps track of your original HOME in OLD_HOME and will
+             restore it if you press 'r'.
+      Alternatively, create your own home variable
+      eg JS_HOME for your javascript projects etc
+      The sifs.template function assumes you want to do the latter and uses MY_HOME
+      with a 'go' function.
    3) Use namespacing if you want to load more than one include file
       at the same time
 
@@ -111,19 +116,22 @@ less <<-EOF
   [Title here]
 
   Variables:
-  HOME: \$HOME
-  VAR1: \$VAR1
+  MY_HOME: \$MY_HOME  - See below
+  VAR1: \$VAR1        - See below
 
   Functions:
-  func1           - Describe func1
+  go           - Describe go here.
 
 EOF
     }
-HOME=     # Set or remove
-VAR1=var1 # Set or remove
 
-func1() {
-  foo=
+MY_HOME=     # Change MY_HOME to preferred name or HOME (if you really want to ).
+VAR1=var1    # Set or remove
+
+go() {
+  case "\$1" in
+  *) cd $MY_HOME ;;
+  esac
 }
 
 EF
