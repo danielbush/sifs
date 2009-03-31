@@ -68,6 +68,13 @@ less <<-EOF
   r            Reset sifs and your shell; basically set HOME to OLD_HOME (your original HOME).
   rc           shortcut for running 'r' then 'c'; use this to change to a sif file in a different
                sif repo to your current one.
+
+  The following g/m functions are to help you jump about from one location to another.
+  m <char>     store current directory in a variable \$STASH_<char>
+  m -          clear (unset) all \$STASH_<char>
+  g            view all STASH variables
+  g <char>     cd to \$STASH_<char>
+
   sifs.go      cd to SIFS_HOME 
   sifs.dir     cd to SIFS_DIR  (if you want to delete a file etc)
 
@@ -168,4 +175,22 @@ r() {
 
 rc() {
   r;c
+}
+
+m() {
+  case "$1" in
+  [a-z0-9A-Z]*) eval STASH_$1=$(pwd);;
+  -) for i in $(set | grep '^STASH_' | sed -e 's/=.*$//'); do unset $i; done;;
+  *) echo "Usage: m <char> where <char> might be a,b,c or 1,2,3 ... etc" 
+     echo "If <char> is '-', settings will be cleared."
+     return 1 ;;
+  esac
+}
+g() {
+  case "$1" in
+  "") set | grep '^STASH_' | sed -e 's/^STASH_//;s/=/: /' ;;
+  *) if echo "$1" | grep -q '[0-9a-zA-Z_]'; then
+       eval "if test -n \"\$STASH_$1\"; then cd \$STASH_$1; fi"
+     fi
+  esac
 }
