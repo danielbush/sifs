@@ -7,6 +7,15 @@
 # 
 # You are free to use or modify SIFS as you please.
 
+# Include optional dot commands.
+# Unset SIFS_DOT_COMMANDS or set to 'n' to stop.
+# Dot commands  will overwrite command_not_found_handler.
+# Because some people may not like this, 
+# it is not included directly in this file.
+case "$SIFS_DOT_COMMANDS" in 
+y|Y) . $SIFS_HOME/dot_commands.sh ;;
+esac
+
 if ! test -n "$BASH"; then
   echo "Not starting SIFS - you need a bash shell."
   return 1
@@ -66,14 +75,21 @@ less <<-EOF
   c [name]     Run 'c' with name of sif file (should be absolute path with .sif included).
   e            Edit the current included file.
   r            Reset sifs and your shell; basically set HOME to OLD_HOME (your original HOME).
-  rc           shortcut for running 'r' then 'c'; use this to change to a sif file in a different
-               sif repo to your current one.
+  rc           shortcut for running 'r' then 'c'; use this to change to a sif
+               file in a different sif repo to your current one.
 
   The following g/m functions are to help you jump about from one location to another.
   m <char>     store current directory in a variable \$STASH_<char>
   m -          clear (unset) all \$STASH_<char>
   g            view all STASH variables
   g <char>     cd to \$STASH_<char>
+  gg           An alt-tab for bash.  Alternate between current directory and
+               STASH_LAST; STASH_LAST is set when you use the 'g <char>' command.  
+  If you've enabled dot_commands (default) and bash supports 
+  command_not_found_handler(), then you will also have the following shortcuts:
+  .<char>      same as: g <char>
+  ..<char>     same as: m <char>
+  ..           same as: gg
 
   sifs.go      cd to SIFS_HOME 
   sifs.dir     cd to SIFS_DIR  (if you want to delete a file etc)
@@ -189,8 +205,21 @@ m() {
 g() {
   case "$1" in
   "") set | grep '^STASH_' | sed -e 's/^STASH_//;s/=/: /' ;;
-  *) if echo "$1" | grep -q '[0-9a-zA-Z_]'; then
-       eval "if test -n \"\$STASH_$1\"; then cd \$STASH_$1; fi"
+  *) if echo "$1" | egrep -q '^[0-9a-zA-Z_]+$'; then
+       eval "_stash=\"\$STASH_$1\""
+       if test -n $_stash; then 
+         STASH_LAST=$(pwd); 
+         echo $_stash; 
+         cd $_stash; 
+       fi
      fi
   esac
+}
+gg() {
+  if test -n "$STASH_LAST"; then
+    _stash=$(pwd)
+    echo $STASH_LAST
+    cd $STASH_LAST
+    STASH_LAST=$_stash
+  fi
 }

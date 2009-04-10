@@ -74,16 +74,19 @@ GETTING STARTED
 0) Select where you want to install sifs - this is represented by the shell
 variable SIFS_HOME.  Unpack the sifs system to SIFS_HOME.
 You should see files like:
-  $SIFS_HOME/includes
   $SIFS_HOME/sifs.sh
+  $SIFS_HOME/README
+  $SIFS_HOME/sifs.conf.example
 and several other things.
 
 1) In your .bashrc (or similar) add these lines:
       EDITOR=vim # Or whatever you prefer.
       export SIFS_HOME=/path/to/sifs
+      SIFS_DOT_COMMANDS=y
       . $SIFS_HOME/sifs.sh
 /path/to/sifs could be /etc/sifs or  /home/<user>/sifs etc.
 Make sure you set EDITOR to your favorite editor.
+See section DOT COMMANDS below for SIFS_DOT_COMMANDS.
 
 2) Set up at least one sif file repository (SIFS_DIR).  This is a directory
    containing .sif files.  You set one up by making the directory and then
@@ -130,6 +133,11 @@ Make sure you set EDITOR to your favorite editor.
    To change repo, either type 'r' then 'c' or type 'd' then 'c'.
    The former is probably the quickest.
 
+DOT COMMANDS
+This is an experimental feature that allows the user to use
+.<char> and ..<char> as command shortcuts for the g and m keys
+respectively.  They are discussed in the standard sifs help
+file which can be loaded using 'hh' or see 'hh' in sifs.sh.
 
 SIF FILE FORMAT
 
