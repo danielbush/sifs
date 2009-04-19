@@ -133,11 +133,20 @@ See section DOT COMMANDS below for SIFS_DOT_COMMANDS.
    To change repo, either type 'r' then 'c' or type 'd' then 'c'.
    The former is probably the quickest.
 
-DOT COMMANDS
-This is an experimental feature that allows the user to use
-.<char> and ..<char> as command shortcuts for the g and m keys
-respectively.  They are discussed in the standard sifs help
-file which can be loaded using 'hh' or see 'hh' in sifs.sh.
+HOPPING BETWEEN LOCATIONS AND DOT COMMANDS
+You can store (mark) your current location (pwd) by typing 
+  m <char>
+You can use one or more letters and numbers and underscores for <char>.
+To cd back to this location, type
+  g <char>
+To view your marked locations type
+  g
+To jump back and forth between last location and current location
+(where current location was accessed using 'g <char>)
+  gg
+.<char> and ,<char> can be used as shortcuts for the g and m keys
+respectively (uses a feature that comes with debian/ubuntu bash
+so it may not work on other bashes).
 
 SIF FILE FORMAT
 

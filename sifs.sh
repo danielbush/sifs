@@ -83,8 +83,8 @@ less <<-EOF
   m -          clear (unset) all \$STASH_<char>
   g            view all STASH variables
   g <char>     cd to \$STASH_<char>
-  gg           An alt-tab for bash.  Alternate between current directory and
-               STASH_LAST; STASH_LAST is set when you use the 'g <char>' command.  
+  gg           Go to STASH_LAST; STASH_LAST is set to your current location by 'g <char>' command
+               prior to moving you.
   If you've enabled dot_commands (default) and bash supports 
   command_not_found_handle(), then you will also have the following shortcuts:
   .<char>      same as: g <char>
