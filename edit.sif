@@ -7,16 +7,23 @@
 #
 # You are free to use or modify SIFS as you please.
 
-
 sifs.help() {
+  less $SIFS_HOME/README
+}
+
+sifs.edit.help() {
   less <<-EOF
+
+   SIFS EDITING HELP FILE
 
    Functions: 
 
+   sifs.go                    - cd to SIFS_HOME 
+   sifs.dir                   - cd to SIFS_DIR  (if you want to delete a file etc)
    sifs.conf                  - Edit SIFS_HOME/sifs.conf
-   sifs.template [file_name]  - Create an a sif file from template in current directory
-   sifs.edit           - Edit the SIFS_HOME/sifs.sh
-   sifs.add file_name  - runs sifs.template and puts it in \$SIFS_DIR\file_name.sif
+   sifs.template [file_name]  - Create a sif file from template in current directory
+   sifs.edit                  - Edit the SIFS_HOME/sifs.sh
+   sifs.add file_name         - runs sifs.template and outputs to \$SIFS_DIR\file_name.sif
 
    General rules for writing include files (not the master include file):
 
@@ -153,4 +160,15 @@ sifs.add() {
     return 1
   fi
   sifs.template $SIFS_DIR/$1.sif
+}
+
+sifs.dir() {
+  if test -z "$SIFS_DIR"; then
+    echo "SIFS_DIR not set."
+    return 1
+  fi
+  cd $SIFS_DIR
+}
+sifs.go() {
+  cd $SIFS_HOME
 }

@@ -43,9 +43,10 @@ less <<-EOF
   RESERVED variables:
 
   OLD_HOME:     $OLD_HOME          
-                - Original home directory before SIFS was loaded.
+                - Original HOME directory before SIFS was loaded.
+                  Only useful if you change HOME in your sif file.
   SIFS_INCLUDE: $SIFS_INCLUDE      
-                - Current include file.
+                - Current sif file (sourced into your current shell).
   SIFS_DIR:     $SIFS_DIR         
                 - Current location for finding .sif files.
   SIFS_HOME:    $SIFS_HOME         
@@ -90,8 +91,8 @@ less <<-EOF
   .<char>      same as: g <char>
   ,<char>      same as: m <char>
 
-  sifs.go      cd to SIFS_HOME 
-  sifs.dir     cd to SIFS_DIR  (if you want to delete a file etc)
+  sifs.help       General help and intro
+  sifs.edit.help  Help file for sifs editing eg creating new sif files etc.
 
 EOF
 }
@@ -121,12 +122,6 @@ d() {
   done
 }
 
-sifs.dir() {
-  cd $SIFS_DIR
-}
-sifs.go() {
-  cd $SIFS_HOME
-}
 
 c() {
 
