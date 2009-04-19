@@ -110,7 +110,7 @@ sifs.edit() {
 
 sifs.template() {
   file_name=new_file.sif
-  test -n "$1" && file_name=$1.sif
+  test -n "$1" && file_name=$1
   if test -e "$file_name"; then
     echo "$file_name already exists - delete or rename it."
     read tmp  # Pause here.
