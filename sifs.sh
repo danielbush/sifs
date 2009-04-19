@@ -9,7 +9,7 @@
 
 # Include optional dot commands.
 # Unset SIFS_DOT_COMMANDS or set to 'n' to stop.
-# Dot commands  will overwrite command_not_found_handler.
+# Dot commands  will overwrite command_not_found_handle.
 # Because some people may not like this, 
 # it is not included directly in this file.
 case "$SIFS_DOT_COMMANDS" in 
@@ -86,10 +86,9 @@ less <<-EOF
   gg           An alt-tab for bash.  Alternate between current directory and
                STASH_LAST; STASH_LAST is set when you use the 'g <char>' command.  
   If you've enabled dot_commands (default) and bash supports 
-  command_not_found_handler(), then you will also have the following shortcuts:
+  command_not_found_handle(), then you will also have the following shortcuts:
   .<char>      same as: g <char>
-  ..<char>     same as: m <char>
-  ..           same as: gg
+  ,<char>      same as: m <char>
 
   sifs.go      cd to SIFS_HOME 
   sifs.dir     cd to SIFS_DIR  (if you want to delete a file etc)

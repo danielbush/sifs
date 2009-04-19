@@ -19,9 +19,8 @@ sifs.dot_commands() {
     # command_not_found_handle; case/if-expressions not included.
     cmd=$BASH_COMMAND  
     case $cmd in 
-    ..)  gg ;;
-    ..*) m $(echo $cmd|cut -c 3-) ;;
-    .*)  g $(echo $cmd|cut -c 2-) ;;
+    ,*) m $(echo $cmd|cut -c 2-) ;;
+    .*) g $(echo $cmd|cut -c 2-) ;;
     *);;
     esac
   fi
@@ -43,7 +42,7 @@ trap sifs.dot_commands ERR
 
 command_not_found_handle() {
   case "$1" in
-  .*) return 128;;
+  .*|,*) return 128;;
   *)  return 127;;
   esac
 }
