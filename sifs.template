@@ -1,5 +1,6 @@
 
 h() {
+less <<-EOF
   TITLE HERE
 
   Variables:
