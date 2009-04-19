@@ -1,0 +1,24 @@
+
+h() {
+  TITLE HERE
+
+  Variables:
+  MY_HOME:      $MY_HOME  - See below
+  VAR1:         $VAR1     - See below
+
+  Functions:
+  go           - Describe go here.
+
+EOF
+    }
+
+MY_HOME=/home/user/project    # Change MY_HOME to preferred name or HOME (if you really want to ).
+VAR1=var1                     # Set or remove
+
+go() {
+  case "$1" in
+  *) cd $MY_HOME ;;
+  esac
+}
+
+

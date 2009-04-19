@@ -116,32 +116,7 @@ sifs.template() {
     read tmp  # Pause here.
   else
 
-    cat <<-EF >$file_name
-h() {
-less <<-EOF
-
-  [Title here]
-
-  Variables:
-  MY_HOME: \$MY_HOME  - See below
-  VAR1: \$VAR1        - See below
-
-  Functions:
-  go           - Describe go here.
-
-EOF
-    }
-
-MY_HOME=$(pwd)     # Change MY_HOME to preferred name or HOME (if you really want to ).
-VAR1=var1    # Set or remove
-
-go() {
-  case "\$1" in
-  *) cd $MY_HOME ;;
-  esac
-}
-
-EF
+    cat $SIFS_HOME/sifs.template >$file_name
 
     echo "Created $file_name"
     echo "Edit it? [y] "
@@ -153,7 +128,6 @@ EF
   fi
 
 }
-
 sifs.add() {
   if test -z "$SIFS_DIR"; then
     echo "SIFS_DIR not set."
