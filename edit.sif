@@ -125,7 +125,7 @@ less <<-EOF
 EOF
     }
 
-MY_HOME=     # Change MY_HOME to preferred name or HOME (if you really want to ).
+MY_HOME=$(pwd)     # Change MY_HOME to preferred name or HOME (if you really want to ).
 VAR1=var1    # Set or remove
 
 go() {
