@@ -80,20 +80,23 @@ You should see files like:
 and several other things.
 
 1) In your .bashrc (or similar) add these lines:
-      EDITOR=vim # Or whatever you prefer.
+      export EDITOR=vim # Or whatever you prefer.
       export SIFS_HOME=/path/to/sifs
-      SIFS_DOT_COMMANDS=y
+      export SIFS_CONF=/path/to/sifs.conf
+      export SIFS_DOT_COMMANDS=y  # Optional.
       . $SIFS_HOME/sifs.sh
 /path/to/sifs could be /etc/sifs or  /home/<user>/sifs etc.
 Make sure you set EDITOR to your favorite editor.
 See section DOT COMMANDS below for SIFS_DOT_COMMANDS.
 
-2) Set up at least one sif file repository (SIFS_DIR).  This is a directory
+2) Create sifs.conf
+      % touch /path/to/sifs.conf  # In /home/<user> or /etc or wherever you require.
+3) Set up at least one sif file repository (SIFS_DIR).  This is a directory
    containing .sif files.  You set one up by making the directory and then
-   appending its absolute location in SIFS_HOME/sifs.conf
+   appending its absolute location in SIFS_CONF (your sifs.conf file).
    This directory should probably not be SIFS_HOME or inside SIFS_HOME.
 
-3) Start creating sifs files; use .sif extension to signify the 
+4) Start creating sifs files; use .sif extension to signify the 
    file is a sif file ie is part of a sifs system.
    Sif files follow a specifc format - see SIF FILE FORMAT below.
 
@@ -113,13 +116,13 @@ See section DOT COMMANDS below for SIFS_DOT_COMMANDS.
    A sif file is really a bash script file; by using .sif you are saying it is
    a particular type of shell file following some basic conventions.
 
-4) If you want to locate some of your sif files elsewhere (/x/y/z)
+5) If you want to locate some of your sif files elsewhere (/x/y/z)
    then update sifs.conf with a new entry:
       /x/y/z/sifs
    and move/create the relevant sif files there
      % cp your_file.sif /x/y/z/sifs/your_file.sif
 
-5) To load a sif file type 'c' and follow the prompts.
+6) To load a sif file type 'c' and follow the prompts.
    The 'd' key switches between sif repositories 
    (ie entries on sifs.conf aka SIFS_DIR).
    Most sif file will include a help function which you
@@ -130,7 +133,7 @@ See section DOT COMMANDS below for SIFS_DOT_COMMANDS.
    To reload a sif file (if you've made changes), type 'i'.
    That's pretty much it.
    It's up to you to define the rest of your sif file - see points above.
-   To change repo, either type 'r' then 'c' or type 'd' then 'c'.
+   To change repo, either type 'rc' or type 'd' then 'c'.
    The former is probably the quickest.
 
 HOPPING BETWEEN LOCATIONS AND DOT COMMANDS
@@ -177,7 +180,8 @@ But briefly:
      }
    Set up other variables as needed. This depends on what you're doing.  It 
    should be fairly obvious what is worth stashing as a variable and what isn't.
-4) Then define your functions
+4) Define your functions.
+   For instance, see the go() function above.
 5) Apart from variable setting and maybe some error checking code, sifs files
    shouldn't really execute anything when you source or run them
       % . some_file.sif     # No action

@@ -20,14 +20,16 @@ if ! test -n "$BASH"; then
   echo "Not starting SIFS - you need a bash shell."
   return 1
 fi
-if test -n "$SIFS_HOME"; then
+if test -d "$SIFS_HOME" -a -e "$SIFS_CONF"; then
   . $SIFS_HOME/edit.sif
 else
-  echo "SIFS_HOME is not set, SIFS can't continue."
+  echo "Either SIFS_HOME or SIFS_CONF is not set, SIFS can't continue."
+  echo "Set SIFS_HOME to where you installed sifs;"
+  echo "Set SIFS_CONF to the location of your sifs.conf file."
   return 1
 fi
 if test -z "$EDITOR"; then
-  echo "Warning: please set EDITOR for proper functionality."
+  echo "Warning: please set EDITOR for proper functionality (in ~/.bashrc etc)."
 fi
 
 hh() {
@@ -47,6 +49,8 @@ less <<-EOF
                   Only useful if you change HOME in your sif file.
   SIFS_INCLUDE: $SIFS_INCLUDE      
                 - Current sif file (sourced into your current shell).
+  SIFS_CONF:    $SIFS_CONF         
+                - Location of your sifs.conf file.
   SIFS_DIR:     $SIFS_DIR         
                 - Current location for finding .sif files.
   SIFS_HOME:    $SIFS_HOME         
@@ -60,8 +64,8 @@ less <<-EOF
   Locations:
 
   SIFS_HOME/sifs.sh   - The main sifs file which should be loaded into your system at login
-  SIFS_HOME/sifs.conf - Store locations of sif files
-                        eg /home/user/sifs
+  SIFS_CONF           - Store locations of sif files
+                        eg /home/user/sifs.conf
                         Containing:
                          - /home/user/sifs/project1.sif
                          - etc
@@ -112,7 +116,7 @@ d() {
   echo "Select a sif repository (sets SIFS_DIR)"
   echo "Type q to quit"
   tmpfile=/tmp/sifs.$$
-  cat $SIFS_HOME/sifs.conf | grep -v ' *#'  >$tmpfile
+  cat $SIFS_CONF | grep -v ' *#'  >$tmpfile
   select d in $(cat $tmpfile); do
     if test "$REPLY" = "q"; then
       break
