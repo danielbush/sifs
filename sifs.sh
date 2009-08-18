@@ -77,7 +77,19 @@ less <<-EOF
   d            Select a sifs location by setting SIFS_DIR. 'c' will run this
                automatically if SIFS_DIR is not set.
   c            Source an include file from SIFS_DIR
-  c [name]     Run 'c' with name of sif file (should be absolute path with .sif included).
+  sif [name]   Tries to intelligently load a sif file into the current
+               shell (either interactive or batch mode).
+               If you've already selected a SIFS_DIR, then you can
+               invoke a name of a sif file within SIFS_DIR simply as
+                 sif [name] 
+               where file is [name].sif .
+               However, 'sif' will look for all variants:
+                 [name].sif
+                 [name]  # Assumes the user has suffixed with .sif.
+                 SIFS_DIR/[name].sif
+                 SIFS_DIR/[name]
+  c [name]     At the moment, this is the raw routine called by 'sif'.
+               [name] has to be absolute and include the .sif suffix.
   e            Edit the current included file.
   r            Reset sifs and your shell; basically set HOME to OLD_HOME (your original HOME).
   rc           shortcut for running 'r' then 'c'; use this to change to a sif
@@ -126,6 +138,19 @@ d() {
   done
 }
 
+sif() {
+  if test -z "$1"; then
+    echo "sif: needs name of sif file." >&2
+    return 1
+  fi
+
+  test -f $1.sif && c $1.sif && return 0
+  test -f $1 && c $1 && return 0
+  test -f $SIFS_DIR/$1.sif && c $SIFS_DIR/$1.sif && return 0
+  test -f $SIFS_DIR/$1 && c $SIFS_DIR/$1 && return 0
+  return 1
+
+}
 
 c() {
 
