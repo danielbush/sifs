@@ -183,13 +183,18 @@ c() {
   echo "Using $SIFS_DIR"
   echo
   echo "Type q to quit"
-  select i in $(ls|grep '\.sif$'|sed -e 's/\.sif$//'); do
+  select i in $(sifs.ls|sort); do
     if test "$REPLY" = "q"; then
       break
     fi
-    r --soft  # Reset.
-    export SIFS_INCLUDE=$SIFS_DIR/$i.sif
-    . $i.sif
+    if test -d $i; then
+      export SIFS_DIR=$SIFS_DIR/$i
+      c
+    else
+      r --soft  # Reset.
+      export SIFS_INCLUDE=$SIFS_DIR/$i.sif
+      . $i.sif
+    fi
     break
   done
   popd >/dev/null

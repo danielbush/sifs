@@ -24,6 +24,9 @@ sifs.edit.help() {
    sifs.template [file_name]  - Create a sif file from template in current directory
    sifs.edit                  - Edit the SIFS_HOME/sifs.sh
    sifs.add file_name         - runs sifs.template and outputs to \$SIFS_DIR\file_name.sif
+   sifs.ls                    - List .sif files in SIFS_DIR and any subdirectories.
+                                Used by the 'c' command.
+   sifs.mkdir dir_name        - Makes a directory under SIFS_DIR              
 
    General rules for writing include files (not the master include file):
 
@@ -145,4 +148,19 @@ sifs.dir() {
 }
 sifs.go() {
   cd $SIFS_HOME
+}
+sifs.ls() {
+  find . -maxdepth 1 -type d -printf '%f\n'|grep -v '^\.$';
+  find . -type f -name "*.sif" -printf '%f\n'|sed -e 's/\.sif$//';
+}
+sifs.mkdir() {
+  if test -z "$1"; then
+    echo "Usage: sifs.mkdir <dir_name>"
+    return 1
+  fi
+  if test -z "$SIFS_DIR"; then
+    echo "SIFS_DIR not set."
+    return 1
+  fi
+  mkdir $SIFS_DIR/$1
 }
