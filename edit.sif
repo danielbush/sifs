@@ -27,6 +27,9 @@ sifs.edit.help() {
    sifs.ls                    - List .sif files in SIFS_DIR and any subdirectories.
                                 Used by the 'c' command.
    sifs.mkdir dir_name        - Makes a directory under SIFS_DIR              
+   sifs.up                    - Changes SIFS_DIR to SIFS_DIR/..
+                                No checking is done; use this only if you have SIFS_DIR set
+                                to a subdir of the "sifs.conf-defined" SIFS_DIR.
 
    General rules for writing include files (not the master include file):
 
@@ -168,4 +171,7 @@ sifs.mkdir() {
 sifs.glob() {
   find $SIFS_DIR -mindepth 1 -maxdepth 1 -type d -printf '%f\n'|grep $1;
   find $SIFS_DIR -mindepth 1 -maxdepth 1 -type f -printf '%f\n' | grep '\.sif$'|sed -e 's/\.sif$//'|grep $1;
+}
+sifs.up() {
+  export SIFS_DIR=$(dirname $SIFS_DIR)
 }
