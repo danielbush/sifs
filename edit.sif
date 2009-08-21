@@ -150,8 +150,8 @@ sifs.go() {
   cd $SIFS_HOME
 }
 sifs.ls() {
-  find . -maxdepth 1 -type d -printf '%f\n'|grep -v '^\.$';
-  find . -type f -name "*.sif" -printf '%f\n'|sed -e 's/\.sif$//';
+  find $SIFS_DIR -mindepth 1 -maxdepth 1 -type d -printf '%f\n';
+  find $SIFS_DIR -type f -name "*.sif" -printf '%f\n'|sed -e 's/\.sif$//';
 }
 sifs.mkdir() {
   if test -z "$1"; then
@@ -163,4 +163,7 @@ sifs.mkdir() {
     return 1
   fi
   mkdir $SIFS_DIR/$1
+}
+sifs.glob() {
+  foo=
 }
