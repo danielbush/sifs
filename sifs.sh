@@ -184,20 +184,35 @@ c() {
   echo
   echo "Type q to quit"
   select i in $(sifs.ls|sort); do
-    if test "$REPLY" = "q"; then
+    c.include $i
+    case "$REPLY" in
+    q) break ;;
+    "") ;;
+    *) 
+      select j in $(sifs.glob $REPLY); do
+        c.include $j
+        break
+      done
       break
-    fi
-    if test -d $i; then
-      export SIFS_DIR=$SIFS_DIR/$i
-      c
-    else
-      r --soft  # Reset.
-      export SIFS_INCLUDE=$SIFS_DIR/$i.sif
-      . $i.sif
-    fi
-    break
+    ;;
+    esac
   done
   popd >/dev/null
+}
+
+c.include() {
+    if test -n "$1"; then
+      if test -d "$1"; then
+        export SIFS_DIR=$SIFS_DIR/$1
+        c
+        break
+      elif test -f $1.sif; then
+        r --soft  # Reset.
+        export SIFS_INCLUDE=$SIFS_DIR/$1.sif
+        . $1.sif
+        break
+      fi
+    fi
 }
 
 e() {

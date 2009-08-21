@@ -151,7 +151,7 @@ sifs.go() {
 }
 sifs.ls() {
   find $SIFS_DIR -mindepth 1 -maxdepth 1 -type d -printf '%f\n';
-  find $SIFS_DIR -type f -name "*.sif" -printf '%f\n'|sed -e 's/\.sif$//';
+  find $SIFS_DIR -mindepth 1 -maxdepth 1 -type f -name "*.sif" -printf '%f\n'|sed -e 's/\.sif$//';
 }
 sifs.mkdir() {
   if test -z "$1"; then
@@ -164,6 +164,8 @@ sifs.mkdir() {
   fi
   mkdir $SIFS_DIR/$1
 }
+# Probably should call it regex, not glob (!).
 sifs.glob() {
-  foo=
+  find $SIFS_DIR -mindepth 1 -maxdepth 1 -type d -printf '%f\n'|grep $1;
+  find $SIFS_DIR -mindepth 1 -maxdepth 1 -type f -printf '%f\n' | grep '\.sif$'|sed -e 's/\.sif$//'|grep $1;
 }
