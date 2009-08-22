@@ -41,8 +41,8 @@
   hh                         - Documents general sifs commands
                                This message.
 
-  sifs.go                    - cd to SIFS_HOME 
-  sifs.dir                   - cd to SIFS_DIR  (if you want to delete a file etc)
+  sifs.sys                   - cd to SIFS_HOME 
+  sifs.go                    - cd to SIFS_DIR  (if you want to delete a file etc) 
   sifs.conf                  - Edit SIFS_CONF
   sifs.template [file_name]  - Create a sif file from template in current directory
   sifs.edit                  - Edit the SIFS_HOME/sifs.sh
