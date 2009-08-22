@@ -267,16 +267,13 @@ sifs.add() {
   sifs.template $SIFS_DIR/$1.sif
 }
 
-sifs.dir() {
-  if test -z "$SIFS_DIR"; then
-    echo "SIFS_DIR not set."
-    return 1
-  fi
-  cd $SIFS_DIR
+sifs.sys() {
+  cd $SIFS_HOME
 }
 
 sifs.go() {
-  cd $SIFS_HOME
+  test ! -d $SIFS_DIR && echo 'SIFS_DIR not set or not a directory.' && return 1
+  cd $SIFS_DIR
 }
 
 sifs.ls() {
