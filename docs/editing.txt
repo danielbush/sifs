@@ -1,0 +1,94 @@
+
+   SIFS EDITING HELP FILE
+
+   General rules for writing include files (not the master include file):
+
+   
+   0) See QUICKSTART (sifs.quickstart) for basic instructions on setting up
+      a sif file and the sifs system.
+   1) Some function names and ENV variable names are RESERVED by SIFS_HOME/sifs.sh.
+      Refer to the 'hh' function in sifs.sh.
+   2) Use a standard set of function names
+      and make sure they do not override existing shell or unix functions.
+      Here are some good examples:
+
+   - go      synonym for cd or pushd/popd
+   - choose  'select' is a shell reserved word
+   - show    show something eg maybe specific ENV variables etc)
+             Generally, should just dump to screen without a PAGER
+   - h       general help function; also, print ENV; use less as PAGER
+             Help format should include a list of the functions and
+             a sentence describing what they do.
+             If you do this, don't bother to repeat the comment
+             before the function.  In other words: DESCRIBE THE FUNCTIONS
+             IN THE HELP SECTION AND NOT IN FRONT OF THE FUNCTIONS THEMSELVES.
+             Put your h() function near the top of the include so
+             it doubles as code documentation.
+   - edit    edit a project file
+             (Note: the SIFS_HOME/sifs.sh defines 'e', which will edit the current include file).
+   - run     do something
+   - build
+   - change
+   - list
+   - setup
+   - start|stop|restart|reload
+   - check   synonym for 'test'; don't use test as it is an important shell function.
+   - update
+   - log
+   - option/s
+   - reference
+
+   3) Use a standard set of ENV variables
+      MY_HOME
+        Create your own home variable.
+        The sifs.template function use MY_HOME by default and includes this in
+        the 'go' function.  
+        But it can be what you like; eg JS_HOME for your javascript projects etc
+      HOME - you can change HOME if you want, but beware that personal settings
+             will be made in this location.
+             SIFS keeps track of your original HOME in OLD_HOME and will
+             restore it if you press 'r'.
+      I often end up using variables like this:
+      DB
+      DBAREA
+      LOG
+      LOGAREA
+      ... etc
+
+   4) Use namespacing if you want to load more than one include file
+      at the same time
+      SIFS_ , sifs. , SIF_ and sif. are reserved prefixes.
+
+  NAMESPACING
+
+  Idea: be able to include several heterogeneous sif files and use their
+  functionality simultaneously without explicitly changing into them everytime.
+  You'd first change into each one ('c') to load them into your system.
+  How would we do this to avoid clashes?
+  Use a prefix.  
+  Suppose we have mysql and postgres sif files.
+  We use the prefixes my and pg respectively.
+
+  ----------------------------------------------------
+  For shell and environment variables
+    PG_VAR1=...
+    MY_VAR1=...
+  For functions:
+    pg.func1() {
+     ...
+    my.func1() {
+     ...
+  ----------------------------------------------------
+
+  Help files will need to be redefined:
+    pg.h()
+    my.h()
+  So in the pg sif file, h() would be defined as:
+    h() {
+      pg.h
+    }
+  To make it even clearer that prefixing is being performed we might name the
+  sif files accordingly:
+    \$SIFS_DIR/pg.project1.sif
+    \$SIFS_DIR/my.project1.sif
+

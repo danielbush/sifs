@@ -1,0 +1,57 @@
+
+  Functions (RESERVED names)
+  hh           Output this help message.
+  i            Re-source the current include file and print its location
+  d            Select a sifs location by setting SIFS_DIR. 'c' will run this
+               automatically if SIFS_DIR is not set.
+  c            Source an include file from SIFS_DIR
+  sif [name]   Tries to intelligently load a sif file into the current
+               shell (either interactive or batch mode).
+               If you've already selected a SIFS_DIR, then you can
+               invoke a name of a sif file within SIFS_DIR simply as
+                 sif [name] 
+               where file is [name].sif .
+               However, 'sif' will look for all variants:
+                 [name].sif
+                 [name]  # Assumes the user has suffixed with .sif.
+                 SIFS_DIR/[name].sif
+                 SIFS_DIR/[name]
+  c [name]     At the moment, this is the raw routine called by 'sif'.
+               [name] has to be absolute and include the .sif suffix.
+  e            Edit the current included file.
+  r            Reset sifs and your shell; basically set HOME to OLD_HOME (your original HOME).
+  rc           shortcut for running 'r' then 'c'; use this to change to a sif
+               file in a different sif repo to your current one.
+
+  The following g/m functions are to help you jump about from one location to another.
+  m <char>     store current directory in a variable \$STASH_<char>
+  m -          clear (unset) all \$STASH_<char>
+  g            view all STASH variables
+  g <char>     cd to \$STASH_<char>
+  gg           Go to STASH_LAST; STASH_LAST is set to your current location by 'g <char>' command
+               prior to moving you.
+  If you've enabled dot_commands (default) and bash supports 
+  command_not_found_handle(), then you will also have the following shortcuts:
+  .<char>      same as: g <char>
+  ,<char>      same as: m <char>
+
+  sifs.readme                - General explanation & philosophy
+  sifs.quickstart            - General explanation & philosophy
+  sifs.help                  - Guidelines, ideas for editing a sif file.
+  hh                         - Documents general sifs commands
+                               This message.
+
+  sifs.go                    - cd to SIFS_HOME 
+  sifs.dir                   - cd to SIFS_DIR  (if you want to delete a file etc)
+  sifs.conf                  - Edit SIFS_CONF
+  sifs.template [file_name]  - Create a sif file from template in current directory
+  sifs.edit                  - Edit the SIFS_HOME/sifs.sh
+  sifs.add file_name         - runs sifs.template and outputs to \$SIFS_DIR\file_name.sif
+  sifs.ls                    - List .sif files in SIFS_DIR and any subdirectories.
+                               Used by the 'c' command.
+  sifs.mkdir dir_name        - Makes a directory under SIFS_DIR              
+  sifs.up                    - Changes SIFS_DIR to SIFS_DIR/..
+                               No checking is done; use this only if you have SIFS_DIR set
+                               to a subdir of the "sifs.conf-defined" SIFS_DIR.
+
+

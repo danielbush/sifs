@@ -12,16 +12,18 @@
 # Dot commands  will overwrite command_not_found_handle.
 # Because some people may not like this, 
 # it is not included directly in this file.
+
 case "$SIFS_DOT_COMMANDS" in 
 y|Y) . $SIFS_HOME/dot_commands.sh ;;
 esac
+
 
 if ! test -n "$BASH"; then
   echo "Not starting SIFS - you need a bash shell."
   return 1
 fi
 if test -d "$SIFS_HOME" -a -e "$SIFS_CONF"; then
-  . $SIFS_HOME/edit.sif
+  echo "SIFS vars are set."
 else
   echo "Either SIFS_HOME or SIFS_CONF is not set, SIFS can't continue."
   echo "Set SIFS_HOME to where you installed sifs;"
@@ -42,74 +44,32 @@ less <<-EOF
                
   Help page for SIFS system (hh)
 
-  RESERVED variables:
 
+  RESERVED variables:
+  ======================================================================
+  You should see values; if there are any BLANKS, your sifs
+  system may not be working properly ;)
+
+  HOME:         $HOME
   OLD_HOME:     $OLD_HOME          
                 - Original HOME directory before SIFS was loaded.
                   Only useful if you change HOME in your sif file.
   SIFS_INCLUDE: $SIFS_INCLUDE      
                 - Current sif file (sourced into your current shell).
   SIFS_CONF:    $SIFS_CONF         
-                - Location of your sifs.conf file.
+                - Location of your sifs.conf file that stores one or more
+                  SIFS_DIR's.
+                - See SIFS_HOME/sifs.conf.example.
   SIFS_DIR:     $SIFS_DIR         
                 - Current location for finding .sif files.
   SIFS_HOME:    $SIFS_HOME         
-                - Location of the SIFS system
-                  eg SIFS_HOME=/home/danb/sifs  or /etc/sifs
+                - Location of the SIFS system software
+                  eg SIFS_HOME=/home/danb/sifs.sys  or /etc/sifs.sys
+                  or whatever you want to call it.
+                  I often reserve 'sifs' by itself for a SIFS_DIR.
+  ======================================================================
 
-  Variables managed by the current include file:
-  HOME:         $HOME
-
-
-  Locations:
-
-  SIFS_HOME/sifs.sh   - The main sifs file which should be loaded into your system at login
-  SIFS_CONF           - Store locations of sif files
-                        eg /home/user/sifs.conf
-                        Containing:
-                         - /home/user/sifs/project1.sif
-                         - etc
-                        eg /etc/sifs
-
-  Functions (RESERVED names)
-  hh           Output this help message.
-  i            Re-source the current include file and print its location
-  d            Select a sifs location by setting SIFS_DIR. 'c' will run this
-               automatically if SIFS_DIR is not set.
-  c            Source an include file from SIFS_DIR
-  sif [name]   Tries to intelligently load a sif file into the current
-               shell (either interactive or batch mode).
-               If you've already selected a SIFS_DIR, then you can
-               invoke a name of a sif file within SIFS_DIR simply as
-                 sif [name] 
-               where file is [name].sif .
-               However, 'sif' will look for all variants:
-                 [name].sif
-                 [name]  # Assumes the user has suffixed with .sif.
-                 SIFS_DIR/[name].sif
-                 SIFS_DIR/[name]
-  c [name]     At the moment, this is the raw routine called by 'sif'.
-               [name] has to be absolute and include the .sif suffix.
-  e            Edit the current included file.
-  r            Reset sifs and your shell; basically set HOME to OLD_HOME (your original HOME).
-  rc           shortcut for running 'r' then 'c'; use this to change to a sif
-               file in a different sif repo to your current one.
-
-  The following g/m functions are to help you jump about from one location to another.
-  m <char>     store current directory in a variable \$STASH_<char>
-  m -          clear (unset) all \$STASH_<char>
-  g            view all STASH variables
-  g <char>     cd to \$STASH_<char>
-  gg           Go to STASH_LAST; STASH_LAST is set to your current location by 'g <char>' command
-               prior to moving you.
-  If you've enabled dot_commands (default) and bash supports 
-  command_not_found_handle(), then you will also have the following shortcuts:
-  .<char>      same as: g <char>
-  ,<char>      same as: m <char>
-
-  sifs.help       General help and intro
-  sifs.edit.help  Help file for sifs editing eg creating new sif files etc.
-
+  $(cat $SIFS_HOME/docs/reference.txt)
 EOF
 }
 
@@ -265,4 +225,95 @@ gg() {
     cd $STASH_LAST
     STASH_LAST=$_stash
   fi
+}
+
+# sifs.* commands
+#-----------------------------------------------------
+
+sifs.conf() {
+  $EDITOR $SIFS_CONF
+}
+
+sifs.edit() {
+  $EDITOR $SIFS_HOME/sifs.sh
+}
+
+sifs.template() {
+  file_name=new_file.sif
+  test -n "$1" && file_name=$1
+  if test -e "$file_name"; then
+    echo "$file_name already exists - delete or rename it."
+    read tmp  # Pause here.
+  else
+
+    cat $SIFS_HOME/sifs.template >$file_name
+
+    echo "Created $file_name"
+    echo "Edit it? [y] "
+    read resp
+    case "$resp" in
+    n|N|no|NO|No) ;;
+    *) $EDITOR $file_name ;;
+    esac
+  fi
+
+}
+
+sifs.add() {
+  if test -z "$SIFS_DIR"; then
+    echo "SIFS_DIR not set."
+    return 1
+  fi
+  sifs.template $SIFS_DIR/$1.sif
+}
+
+sifs.dir() {
+  if test -z "$SIFS_DIR"; then
+    echo "SIFS_DIR not set."
+    return 1
+  fi
+  cd $SIFS_DIR
+}
+
+sifs.go() {
+  cd $SIFS_HOME
+}
+
+sifs.ls() {
+  find $SIFS_DIR -mindepth 1 -maxdepth 1 -type d -printf '%f\n';
+  find $SIFS_DIR -mindepth 1 -maxdepth 1 -type f -name "*.sif" -printf '%f\n'|sed -e 's/\.sif$//';
+}
+
+sifs.mkdir() {
+  if test -z "$1"; then
+    echo "Usage: sifs.mkdir <dir_name>"
+    return 1
+  fi
+  if test -z "$SIFS_DIR"; then
+    echo "SIFS_DIR not set."
+    return 1
+  fi
+  mkdir $SIFS_DIR/$1
+}
+
+# Probably should call it regex, not glob (!).
+sifs.glob() {
+  find $SIFS_DIR -mindepth 1 -maxdepth 1 -type d -printf '%f\n'|grep $1;
+  find $SIFS_DIR -mindepth 1 -maxdepth 1 -type f -printf '%f\n' | grep '\.sif$'|sed -e 's/\.sif$//'|grep $1;
+}
+
+sifs.up() {
+  export SIFS_DIR=$(dirname $SIFS_DIR)
+}
+
+sifs.help() {
+  less $SIFS_HOME/docs/editing.txt
+}
+
+sifs.readme() {
+  less $SIFS_HOME/README
+}
+
+sifs.quickstart() {
+  less $SIFS_HOME/QUICKSTART
 }

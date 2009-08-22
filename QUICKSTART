@@ -1,0 +1,78 @@
+GETTING STARTED
+
+0) Select where you want to install sifs - this is represented by the shell
+variable SIFS_HOME.  Unpack the sifs system to SIFS_HOME.
+You should see files like:
+  $SIFS_HOME/sifs.sh
+  $SIFS_HOME/README
+  $SIFS_HOME/sifs.conf.example
+and several other things.
+
+1) In your .bashrc (or similar) add these lines:
+      export EDITOR=vim # Or whatever you prefer.
+      export SIFS_HOME=/path/to/sifs
+      export SIFS_CONF=/path/to/sifs.conf
+      export SIFS_DOT_COMMANDS=y  # Optional.
+      . $SIFS_HOME/sifs.sh
+/path/to/sifs could be /etc/sifs or  /home/<user>/sifs etc.
+Make sure you set EDITOR to your favorite editor.
+See section DOT COMMANDS below for SIFS_DOT_COMMANDS.
+
+2) Create sifs.conf
+      % touch /path/to/sifs.conf  
+   in /home/<user> or /etc or wherever you require.
+
+3) Set up at least one sif file repository (SIFS_DIR).  This is a directory
+   containing .sif files.  You set one up by making the directory and then
+   appending its absolute location in SIFS_CONF (your sifs.conf file).
+   This directory should probably not be SIFS_HOME or inside SIFS_HOME.
+   For instance 
+   % cat $SIFS_CONF
+     /home/user/sifs
+   % ls /home/user/sifs
+     some_project1.sif
+     some_project2.sif
+     ... etc
+
+4) Start creating sifs files; use .sif extension to signify the 
+   file is a sif file ie is part of a sifs system.
+   Sif files tend to follow a specifc format - see SIF FILE FORMAT below.
+
+   Refer to SIFS_HOME/docs/editing.txt or run
+     % sifs.help
+
+   The command:
+     % sifs.template
+   creates a template in the current directory.
+
+   This creates template called filename.
+     % sifs.template filename
+
+   This will create template in your current sif repository (SIFS_DIR):
+     % sifs.add filename
+
+
+5) If you want to locate some of your sif files elsewhere (/x/y/z)
+   then update sifs.conf with a new entry:
+      /x/y/z/sifs
+   and move/create the relevant sif files there
+     % cp your_file.sif /x/y/z/sifs/your_file.sif
+
+6) To load a sif file type 'c' and follow the prompts.
+   The 'd' key switches between sif repositories 
+   (ie entries on sifs.conf aka SIFS_DIRs).
+   Most sif files will include a help function which you
+   access with 'h'.
+   The SIFS_HOME/sifs.sh file also has a help function
+   which you access with 'hh'.
+   To edit the sif file type 'e'.
+   To reload a sif file (if you've made changes), type 'i'.
+   That's pretty much it.
+   It's up to you to define the rest of your sif file - see points above.
+   To change repo, either type 'rc' or type 'd' then 'c'.
+   The former is probably the quickest.
+
+   Log in or re-include your bashrc file and run
+   % sifs.readme # Or: read the README.
+   % sifs.help   # Or: hh
+   % sifs.edit.help
