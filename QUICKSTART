@@ -72,8 +72,8 @@ See section DOT COMMANDS below for SIFS_DOT_COMMANDS.
 
    Log in or re-include your bashrc file and run
    % hh          # General reference for commands.
-   % sifs.readme # Overall philosophy, guidelines, conventions.
    % sifs.quickstart # This message.
+   % sifs.readme # Overall philosophy, guidelines, conventions.
    % sifs.help   # Stuff on creating a sif file.
 
 7) SIFS now also allows you to create subdirectories within a SIFS_DIR.

@@ -1,6 +1,11 @@
-
   Functions (RESERVED names)
-  hh           Output this help message.
+
+  hh                         - Output this help message.  General SIFS reference.
+  sifs.quickstart            - Setting up and using SIFS.
+  sifs.readme                - General explanation & philosophy
+  sifs.help                  - Guidelines, ideas for editing a sif file.
+                               
+
   i            Re-source the current include file and print its location
   d            Select a sifs location by setting SIFS_DIR. 'c' will run this
                automatically if SIFS_DIR is not set.
@@ -35,11 +40,6 @@
   .<char>      same as: g <char>
   ,<char>      same as: m <char>
 
-  sifs.readme                - General explanation & philosophy
-  sifs.quickstart            - General explanation & philosophy
-  sifs.help                  - Guidelines, ideas for editing a sif file.
-  hh                         - Documents general sifs commands
-                               This message.
 
   sifs.sys                   - cd to SIFS_HOME 
   sifs.go                    - cd to SIFS_DIR  (if you want to delete a file etc) 
