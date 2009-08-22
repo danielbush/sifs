@@ -44,7 +44,8 @@
   sifs.sys                   - cd to SIFS_HOME 
   sifs.go                    - cd to SIFS_DIR  (if you want to delete a file etc) 
   sifs.conf                  - Edit SIFS_CONF
-  sifs.template [file_name]  - Create a sif file from template in current directory
+  sifs.template              - Print sifs template to stdout
+  sifs.template [file_name]  - Create a sif file using sifs template in current directory
   sifs.edit                  - Edit the SIFS_HOME/sifs.sh
   sifs.add file_name         - runs sifs.template and outputs to \$SIFS_DIR\file_name.sif
   sifs.ls                    - List .sif files in SIFS_DIR and any subdirectories.

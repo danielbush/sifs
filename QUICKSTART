@@ -41,15 +41,16 @@ See section DOT COMMANDS below for SIFS_DOT_COMMANDS.
    Refer to SIFS_HOME/docs/editing.txt or run
      % sifs.help
 
+   This creates template in your current sif repository (SIFS_DIR):
+     % sifs.add filename
+
    The command:
      % sifs.template
-   creates a template in the current directory.
+   outputs a sifs template to stdout.
 
-   This creates template called filename.
+   This creates template called filename in current directory:
      % sifs.template filename
 
-   This will create template in your current sif repository (SIFS_DIR):
-     % sifs.add filename
 
 
 5) If you want to locate some of your sif files elsewhere (/x/y/z)
