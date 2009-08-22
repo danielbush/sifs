@@ -239,22 +239,24 @@ sifs.edit() {
 }
 
 sifs.template() {
-  file_name=new_file.sif
-  test -n "$1" && file_name=$1
-  if test -e "$file_name"; then
-    echo "$file_name already exists - delete or rename it."
+  if test -n "$1"; then
+
+  if test -e "$1"; then
+    echo "$1 already exists - delete or rename it."
     read tmp  # Pause here.
   else
-
-    cat $SIFS_HOME/sifs.template >$file_name
-
-    echo "Created $file_name"
+    cat $SIFS_HOME/sifs.template >$1
+    echo "Created $1"
     echo "Edit it? [y] "
     read resp
     case "$resp" in
     n|N|no|NO|No) ;;
-    *) $EDITOR $file_name ;;
+    *) $EDITOR $1 ;;
     esac
+  fi
+
+  else
+    less $SIFS_HOME/sifs.template
   fi
 
 }
