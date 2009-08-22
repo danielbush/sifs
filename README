@@ -31,7 +31,9 @@ The SIFS system does the following:
    in those repositories.
 3) currently assumes you're running bash.
 
-See the QUICKSTART file to set up and basic commands.
+---------------------------------------------------------------------------
+See the QUICKSTART file for setting SIFS up and basic commands.
+---------------------------------------------------------------------------
 
 SIFS is so simple you could easily implement it yourself.  To this extent,
 this software is just expressing a simple idea but it is one that has helped
@@ -75,7 +77,8 @@ The sifs system serves to
    Type 'i' to re-include it into your shell.
 5) SIFS implementation tries to keep it simple; apart from sourcing files,
    using several unix/linux command line functions and doing the occasional
-   bash 'select' we aren't doing anything too clever.
+   bash 'select' we aren't doing anything too clever (with the exception 
+   of the "dot commands", that is ;) ).
 
 
 NOTES / CONVENTIONS / GUIDING PRINCIPLES
@@ -105,7 +108,17 @@ NOTES / CONVENTIONS / GUIDING PRINCIPLES
       SIFS_DIR. (This is useful if you use a scripted 'screen' setup
       where you want screen's windows to already be set to a SIFS_DIR).
       (When run without an argument, 'c' requires SIFS_DIR.)
-
+2) I've sometimes been tempted to store data alongside a sif file.
+   For instance, I might be logging changes I make to a system or a project
+   and store these either in the sif file or as a .log file next to it.
+   However, whilst it is possible to store non-sif files alongside your sif
+   files, it is probably better to store all project data including slightly 
+   meta-stuff like your progress with the project itself.  Use your sif file
+   to point to it.
+   This raises the question: shouldn't I also store my sif file with the
+   project rather than in a centralised SIFS_DIR.
+   The answer is: you can.  Just put a symbolic link of your sifs file in
+   SIFS_DIR.
 
 
 HOPPING BETWEEN LOCATIONS AND DOT COMMANDS
@@ -131,7 +144,7 @@ I have my own rules, but you can of course just do your own if you like.
 
 See SIFS_HOME/QUICKSTART
     % sifs.quickstart
-    SIFS_HOME/docs/editing.sif, type:
+See SIFS_HOME/docs/editing.txt
     % sifs.help
 and the sifs.template function.
 Run:
