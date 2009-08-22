@@ -149,11 +149,13 @@ c() {
     q) break ;;
     "") ;;
     *) 
+      j=
       select j in $(sifs.glob $REPLY); do
         c.include $j
         break
       done
-      break
+      # Only break if user typed a valid number.
+      test -n "$j" && break
     ;;
     esac
   done
