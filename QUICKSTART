@@ -56,15 +56,13 @@ See section DOT COMMANDS below for SIFS_DOT_COMMANDS.
    then update sifs.conf with a new entry:
       /x/y/z/sifs
    and move/create the relevant sif files there
-     % cp your_file.sif /x/y/z/sifs/your_file.sif
+     % cp your_file.sif /x/y/z/sifs/
 
 6) To load a sif file type 'c' and follow the prompts.
    The 'd' key switches between sif repositories 
    (ie entries on sifs.conf aka SIFS_DIRs).
    Most sif files will include a help function which you
    access with 'h'.
-   The SIFS_HOME/sifs.sh file also has a help function
-   which you access with 'hh'.
    To edit the sif file type 'e'.
    To reload a sif file (if you've made changes), type 'i'.
    That's pretty much it.
@@ -73,6 +71,18 @@ See section DOT COMMANDS below for SIFS_DOT_COMMANDS.
    The former is probably the quickest.
 
    Log in or re-include your bashrc file and run
-   % sifs.readme # Or: read the README.
-   % sifs.help   # Or: hh
-   % sifs.edit.help
+   % hh          # General reference for commands.
+   % sifs.readme # Overall philosophy, guidelines, conventions.
+   % sifs.quickstart # This message.
+   % sifs.help   # Stuff on creating a sif file.
+
+7) SIFS now also allows you to create subdirectories within a SIFS_DIR.
+   Use these to group your sif files if you have a lot of them.
+   Example:
+     % sifs.mkdir foo  # Creates SIFS_DIR/foo/
+     % c               # Select foo.
+     % sifs.add foo_project # Creates SIFS_DIR/foo/foo_project.sif
+     % c               # You can now choose foo_project.
+     % sifs.up         # Takes you back up to SIFS_DIR
+     % c               # Now you see top-level sif files and subdirs.
+

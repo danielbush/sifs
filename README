@@ -31,6 +31,8 @@ The SIFS system does the following:
    in those repositories.
 3) currently assumes you're running bash.
 
+See the QUICKSTART file to set up and basic commands.
+
 SIFS is so simple you could easily implement it yourself.  To this extent,
 this software is just expressing a simple idea but it is one that has helped
 me to organize and handle more complexity in my daily jobs.
@@ -103,6 +105,7 @@ NOTES / CONVENTIONS / GUIDING PRINCIPLES
       SIFS_DIR. (This is useful if you use a scripted 'screen' setup
       where you want screen's windows to already be set to a SIFS_DIR).
       (When run without an argument, 'c' requires SIFS_DIR.)
+
 
 
 HOPPING BETWEEN LOCATIONS AND DOT COMMANDS
