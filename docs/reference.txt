@@ -10,6 +10,7 @@
   d            Select a sifs location by setting SIFS_DIR. 'c' will run this
                automatically if SIFS_DIR is not set.
   c            Source an include file from SIFS_DIR
+  j            Select a previous SIF file; up to 9 unique are stored.
   sif [name]   Tries to intelligently load a sif file into the current
                shell (either interactive or batch mode).
                If you've already selected a SIFS_DIR, then you can
@@ -21,8 +22,11 @@
                  [name]  # Assumes the user has suffixed with .sif.
                  SIFS_DIR/[name].sif
                  SIFS_DIR/[name]
+               Like 'c [name]', sets SIFS_DIR.
   c [name]     At the moment, this is the raw routine called by 'sif'.
                [name] has to be absolute and include the .sif suffix.
+               Will set SIFS_DIR.  See implementation of j() for why SIFS_DIR
+               is set.
   e            Edit the current included file.
   r            Reset sifs and your shell; basically set HOME to OLD_HOME (your original HOME).
   rc           shortcut for running 'r' then 'c'; use this to change to a sif

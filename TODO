@@ -1,0 +1,18 @@
+DB
+28-Aug-09
+- Add '..' on 'c' command to pop up a level.
+  DONE 29-Aug-09
+- Add sif history and 'j' command
+  Sif history keeps track of previous sif files included
+  into shell; j allows you to jump between them without
+  updating this history
+  DONE 29-Aug-09
+- Decide on convention for sif files in general: do we 
+  require that you can just . sif file? Or do we require that
+  you load the sif machinery first like with an interactive
+  session?
+  Are there any instances where we need a full sifs environment
+  when running stuff in one sif file in batch mode?
+  - the 'sif <name>' command can use a shorthand that relies
+    on SIFS_DIR.  'c <name>' requires a full name (but for 
+    some reason sets SIFS_DIR anyway).

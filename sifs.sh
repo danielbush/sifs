@@ -34,6 +34,10 @@ if test -z "$EDITOR"; then
   echo "Warning: please set EDITOR for proper functionality (in ~/.bashrc etc)."
 fi
 
+export OLD_HOME=$HOME
+# TODO: Set bash history and similar to use OLD_HOME settings ? -- DBush 25-Mar-09
+
+
 hh() {
 less <<-EOF
        _  __      
@@ -73,11 +77,7 @@ less <<-EOF
 EOF
 }
 
-
-
-export OLD_HOME=$HOME
-# TODO: Set bash history and similar to use OLD_HOME settings ? -- DBush 25-Mar-09
-
+# See docs/reference.txt for official descriptions.
 
 i() {
  echo $SIFS_INCLUDE
@@ -138,42 +138,62 @@ c() {
   if test -z "$SIFS_DIR"; then d; fi
   if test -z "$SIFS_DIR"; then return 1; fi
 
-  pushd $SIFS_DIR >/dev/null
+
+  while true; do
+  pushd $SIFS_DIR >/dev/null  # SIFS_DIR may change.
+
   echo
   echo "Using $SIFS_DIR"
   echo
-  echo "Type q to quit"
+  echo "Type 'quit' to quit; '..' to go up a level"
+  SIFS_rechoose=no
+  i= ; j=
   select i in $(sifs.ls|sort); do
-    c.include $i
+    test -n "$i" && c.include $i && break
     case "$REPLY" in
-    q) break ;;
-    "") ;;
+    quit) break ;;
+    "..") c.include $REPLY; break ;; 
+    "") ;; # To avoid running sifs.glob below.
     *) 
-      j=
       select j in $(sifs.glob $REPLY); do
-        c.include $j
-        break
+        test -n "$j" && c.include $j && break 2
+        echo "Try again..."
+        SIFS_rechoose=yes
+        break 2
       done
-      # Only break if user typed a valid number.
-      test -n "$j" && break
     ;;
     esac
-  done
+  done # select
+  case "$SIFS_rechoose" in 
+    yes) SIFS_rechoose=no ;; 
+    *) break;; 
+  esac
+
   popd >/dev/null
+  done # while
+
 }
 
 c.include() {
     if test -n "$1"; then
-      if test -d "$1"; then
+      if test "$1" = ".."; then
+        sifs.up
+        SIFS_rechoose="yes"
+        return 0
+      elif test -d "$1"; then
         export SIFS_DIR=$SIFS_DIR/$1
-        c
-        break
+        SIFS_rechoose="yes"
+        return 0
       elif test -f $1.sif; then
         r --soft  # Reset.
         export SIFS_INCLUDE=$SIFS_DIR/$1.sif
         . $1.sif
-        break
+        sifs.push $SIFS_INCLUDE
+        SIFS_rechoose="no"
+        return 0
       fi
+    else
+      return 1
     fi
 }
 
@@ -318,3 +338,60 @@ sifs.readme() {
 sifs.quickstart() {
   less $SIFS_HOME/QUICKSTART
 }
+
+# SIFS History Tracking
+#
+# Record sif file that the user selects when using 'c'.
+# Up to 9: SIFS1 ... SIFS9
+# This is an interactive feature.
+# Use full path to sif file in case a different SIFS_DIR
+# was used (see 'c' for this).
+
+j() {
+  echo "Type 'q' to quit"
+  select i in \
+    $SIFS1 $SIFS2 $SIFS3 \
+    $SIFS4 $SIFS5 $SIFS6 \
+    $SIFS7 $SIFS8 $SIFS9
+  do
+    # 'c <name>' doesn't call sifs.push; only 'c' does.
+    test -n "$i" && c $i && sifs.push $i && break
+    break
+  done
+}
+
+# Move SIFS1 to SIFS2, SIFS2 to ... , ... SIFS9 to nowhere .
+
+sifs.push() {
+  test -z "$1" && echo "Usage: sifs.push <sif-file>" && return 1
+  sifs.push.pack $1
+  for i in 9 8 7 6 5 4 3 2 1; do
+    case "$i" in 1) continue;; esac
+    # i => SIFS[i] ; j => SIFS[i-1]
+    let j=$i-1; eval "SIFSj=\$SIFS$j"
+    if test -n "$SIFSj"; then
+      eval "SIFS$i=\$SIFS$j"
+    fi
+    eval "SIFS$j="
+  done
+  SIFS1=$1
+}
+
+# Remove any blank SIFS$i and renumber from 1.
+# Remove $1 if it is in the list.
+
+sifs.push.pack() {
+  let j=1
+  for i in 1 2 3 4 5 6 7 8 9; do
+    eval "SIFSi=\$SIFS$i"
+    if test -n "$SIFSi" -a "$SIFSi" != "$1" ; then 
+      eval "local SIFStmp$j=\$SIFS$i"
+      let j+=1
+    fi
+  done
+  for i in 1 2 3 4 5 6 7 8 9; do
+    eval "local SIFStmpi=\$SIFStmp$i"
+    eval "SIFS$i=\$SIFStmpi"
+  done
+}
+
