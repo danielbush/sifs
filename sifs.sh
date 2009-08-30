@@ -171,6 +171,7 @@ c() {
 
   popd >/dev/null
   done # while
+  popd >/dev/null 2>&1  # Failsafe.
 
 }
 

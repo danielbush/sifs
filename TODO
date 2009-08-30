@@ -1,4 +1,9 @@
 DB
+30-Aug-09
+- BUG: we don't popd when we change to a sif file.
+  DONE 30-Aug-09
+- Set up DEFAULT_SIFS_DIR which will get used with 
+  SIFS_DIR is blank/not set.
 28-Aug-09
 - Add '..' on 'c' command to pop up a level.
   DONE 29-Aug-09
