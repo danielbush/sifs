@@ -85,6 +85,13 @@ i() {
 }
 
 d() {
+
+  if test -n "$1"; then
+    export SIFS_DIR=$1
+  else
+
+  # Interactive mode...
+
   echo "Select a sif repository (sets SIFS_DIR)"
   echo "Type q to quit"
   tmpfile=/tmp/sifs.$$
@@ -96,6 +103,10 @@ d() {
     export SIFS_DIR=$d
     break
   done
+
+  fi
+
+  c
 }
 
 sif() {
@@ -124,6 +135,7 @@ c() {
 
   if test -n "$1"; then
     if test -f "$1"; then
+      # TODO: use 'd' and 'c.include' here...
       export SIFS_DIR=$(dirname $1)
       export SIFS_INCLUDE=$1
       . $1
@@ -135,7 +147,8 @@ c() {
 
   # Go into interactive mode...
 
-  if test -z "$SIFS_DIR"; then d; fi
+  if test -z "$SIFS_DIR" -a -n "$DEFAULT_SIFS_DIR"; then d "$DEFAULT_SIFS_DIR"; return $?; fi
+  if test -z "$SIFS_DIR"; then d; return $?; fi
   if test -z "$SIFS_DIR"; then return 1; fi
 
 
@@ -181,7 +194,7 @@ c.include() {
         sifs.up
         SIFS_rechoose="yes"
         return 0
-      elif test -d "$1"; then
+      elif test -d "$1" -o -h "$1"; then
         export SIFS_DIR=$SIFS_DIR/$1
         SIFS_rechoose="yes"
         return 0
@@ -301,9 +314,13 @@ sifs.go() {
   cd $SIFS_DIR
 }
 
+# We need -L or else find will not look for sif files in symlinked
+# directories.
+
 sifs.ls() {
-  find $SIFS_DIR -mindepth 1 -maxdepth 1 -type d -printf '%f\n';
-  find $SIFS_DIR -mindepth 1 -maxdepth 1 -type f -name "*.sif" -printf '%f\n'|sed -e 's/\.sif$//';
+  find -L $SIFS_DIR -mindepth 1 -maxdepth 1 -type l -printf '%f\n';
+  find -L $SIFS_DIR -mindepth 1 -maxdepth 1 -type d -printf '%f\n';
+  find -L $SIFS_DIR -mindepth 1 -maxdepth 1 -type f -name "*.sif" -printf '%f\n'|sed -e 's/\.sif$//';
 }
 
 sifs.mkdir() {
@@ -320,8 +337,9 @@ sifs.mkdir() {
 
 # Probably should call it regex, not glob (!).
 sifs.glob() {
-  find $SIFS_DIR -mindepth 1 -maxdepth 1 -type d -printf '%f\n'|grep $1;
-  find $SIFS_DIR -mindepth 1 -maxdepth 1 -type f -printf '%f\n' | grep '\.sif$'|sed -e 's/\.sif$//'|grep $1;
+  find -L $SIFS_DIR -mindepth 1 -maxdepth 1 -type l -printf '%f\n'|grep -i $1;
+  find -L $SIFS_DIR -mindepth 1 -maxdepth 1 -type d -printf '%f\n'|grep -i $1;
+  find -L $SIFS_DIR -mindepth 1 -maxdepth 1 -type f -printf '%f\n' | grep '\.sif$'|sed -e 's/\.sif$//'|grep -i $1;
 }
 
 sifs.up() {

@@ -1,4 +1,45 @@
 DB
+9-Sep-09
+- Add SIFS_DIR_ROOT
+  This is the top level SIFS_DIR.
+  I found myself wanting to reference a library sif file
+  from within a nested SIFS_DIR but all I had was $SIFS_DIR
+  which was nested.  I could have said $SIFS_DIR/.. but that is ugly.
+  If we have a root, then we can specify a path to any nested
+  SIFS_DIR we choose.
+- .sil
+  Simple include library file.
+  Convention would be to namespace your vars and functions.
+  Classic example would be postgres (PG_, pg_, pg.) and mysql 
+  (MY_, my_, my.)
+  Also, you generally don't set a home directory for a sil file
+  and it won't show up when you type c.  Because it is assumed
+  that it gets included via a sif file.
+  We should have a routine for find sil's so we can see them.
+  'l' ?
+  Another example besides pg and mysql is my rails helper functions
+  rfind, rgrep etc
+
+DB
+3-Sep-09
+- Tidy up the reference.txt; 'c' is badly written
+- DEFAULT_SIFS_DIR so that when I first log in it automatically
+  selects the one I normally use when I type 'c'.
+- Get rid of r and rc??
+  See 28-Aug and conventions for referencing sifs files in general.
+  Should we just be able to . a sif and expect it to work?
+  Commands like 'sif' won't work in this instance.
+  But it would be easy to source in sifs.sh so that they do.
+- Treat symbolic links in SIFS_DIR like directories.
+- c "path/to/file.sif" doesn't use 'd'.
+  This also relates to the way c.include works and the r/rc debate.
+- Looks like we source sifs.sh every time we change a sif file.
+  Is that desirable?
+- glob the 'g' command?
+  g <pattern>
+  will try to match an existing mark (m <pattern>).
+  If not, it globs.
+
 30-Aug-09
 - BUG: we don't popd when we change to a sif file.
   DONE 30-Aug-09

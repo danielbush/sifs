@@ -7,7 +7,7 @@
                                
 
   i            Re-source the current include file and print its location
-  d            Select a sifs location by setting SIFS_DIR. 'c' will run this
+  d            Change sifs location (SIFS_DIR). 'c' will run this
                automatically if SIFS_DIR is not set.
   c            Source an include file from SIFS_DIR
   j            Select a previous SIF file; up to 9 unique are stored.
@@ -31,6 +31,9 @@
   r            Reset sifs and your shell; basically set HOME to OLD_HOME (your original HOME).
   rc           shortcut for running 'r' then 'c'; use this to change to a sif
                file in a different sif repo to your current one.
+               The main point of 'r' and 'rc' is that they currently reset HOME if the
+               current sifs file has changed it.  Otherwise use 'd'.
+
 
   The following g/m functions are to help you jump about from one location to another.
   m <char>     store current directory in a variable \$STASH_<char>
