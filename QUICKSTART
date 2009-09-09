@@ -17,6 +17,8 @@ and several other things.
 /path/to/sifs could be /etc/sifs or  /home/<user>/sifs etc.
 Make sure you set EDITOR to your favorite editor.
 See section DOT COMMANDS below for SIFS_DOT_COMMANDS.
+See example bashrc file that came with this project for
+full example.
 
 2) Create sifs.conf
       % touch /path/to/sifs.conf  
