@@ -71,6 +71,18 @@ less <<-EOF
                   eg SIFS_HOME=/home/danb/sifs.sys  or /etc/sifs.sys
                   or whatever you want to call it.
                   I often reserve 'sifs' by itself for a SIFS_DIR.
+  DEFAULT_SIFS_DIR:
+                $DEFAULT_SIFS_DIR
+                - If set, the default sifs dir to use when the sifs
+                  system starts up.  Only useful if you have multiple
+                  sifs repos.
+  LOCAL_SIFS_ROOT
+                $LOCAL_SIFS_ROOT
+                - If set, is the location for searching for local sif files.
+                  See il,el,cl commands.
+  LOCAL_SIF     $LOCAL_SIF
+                - If set, the location of last loaded local sif file.
+                  Type 'il' to load/reload it.
   ======================================================================
 
   $(cat $SIFS_HOME/docs/reference.txt)
