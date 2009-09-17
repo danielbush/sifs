@@ -28,6 +28,18 @@
                Will set SIFS_DIR.  See implementation of j() for why SIFS_DIR
                is set.
   e            Edit the current included file.
+
+  *l COMMANDS
+  These commands are for loading local sif files.
+  These are files not in a centralised SIFS_DIR and are often loaded
+  over an existing sif file.
+  cl           Look for local sif files in LOCAL_SIF_ROOT instead of SIFS_DIR
+               Allow user to load; sets LOCAL_SIF.
+  il           Re-source LOCAL_SIF if it is set; 
+               type 'i' to reload the actual sif file over whatever the
+               LOCAL_SIF was.  'il' will then reload the local file again etc  
+  el           Edit local sif file if LOCAL_SIF is set.
+
   r            Reset sifs and your shell; basically set HOME to OLD_HOME (your original HOME).
   rc           shortcut for running 'r' then 'c'; use this to change to a sif
                file in a different sif repo to your current one.

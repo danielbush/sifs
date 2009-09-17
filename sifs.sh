@@ -211,6 +211,49 @@ c.include() {
     fi
 }
 
+# Source a local sif file.
+
+cl() {
+  test ! -d "$LOCAL_SIFS_ROOT" && 
+    echo "LOCAL_SIFS_ROOT not set." && return 1
+
+  test -n "$1" && . $1 && LOCAL_SIF="$1" && return 0
+
+  echo "Using local root: $LOCAL_SIFS_ROOT"
+  echo "q to quit"
+  echo "afterwards: 'i' to load original sif; 'il' to reload local sif"
+  pushd $LOCAL_SIFS_ROOT >/dev/null
+  select i in $(find . -type f -name "*.sif" ); do
+    case "$REPLY" in 
+    q) break ;;
+    esac
+    . $i
+    LOCAL_SIF=$LOCAL_SIFS_ROOT/$i
+    break
+  done
+  popd >/dev/null
+}
+
+
+# Reload local sif file.
+
+il() {
+  test -z "$LOCAL_SIF" && 
+    echo "LOCAL_SIF not set." && return 1
+  test ! -e "$LOCAL_SIF" && 
+    echo "LOCAL_SIF ($LOCAL_SIF) doesn't exist." && return 1
+  echo "Reloading local sif file: $LOCAL_SIF"
+  cl $LOCAL_SIF
+}
+
+el() {
+  test -z "$LOCAL_SIF" && 
+    echo "LOCAL_SIF not set." && return 1
+  test ! -e "$LOCAL_SIF" && 
+    echo "LOCAL_SIF ($LOCAL_SIF) doesn't exist." && return 1
+  $EDITOR $LOCAL_SIF
+}
+
 e() {
   $EDITOR $SIFS_INCLUDE
 }
