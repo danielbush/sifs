@@ -1,4 +1,39 @@
 DB
+17-Sep-09
+- cl uses find to locate sif files in LOCAL_SIRS_ROOT
+  This would be set by a normal sif file.
+  If not set, cl does the 'find' in '.'.
+  You might use a local sif file if it is closely tied
+  to a project and its code rather than have it centralised
+  in a SIFS_DIR.
+15-Sep-09
+- a default sif file cf DEFAULT_SIFS_DIR
+- 'sif' command doesn't seem to update the 'j' command
+- sifs.lib.glob
+  Create a lib area for useful routines that I migth want to 
+  use in shell scripts and sif files.
+- local sif files
+  we could temporarily attach them to the current sifs_dir
+  via a symbolic link.
+  SIFS_ATTACH_DIR=$SIFS_DIR/attach
+  How do we know about these local sif files if they're not
+  permanently in a SIFS_DIR?  Answer: because they are probably
+  referenced and set up via a sif in SIFS_DIR.
+  - cl | c.local | clocal | sifs.local
+    - just . the file, but don't change SIFS_*
+    - type 'i' to get back to previous sif
+  - sifs.attach
+  - sifs.detach
+14-Sep-09
+- anonymous sif files
+  - create /tmp/$$.sif
+  - switch to it
+  - option to safe as a sif in SIFS_DIR
+- sil redux
+  - store sils anywhere within SIFS_DIR
+  - sil to load them
+  - sil.ls to list them
+
 9-Sep-09
 - Add SIFS_DIR_ROOT
   This is the top level SIFS_DIR.
