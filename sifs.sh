@@ -226,8 +226,10 @@ c.include() {
 # Source a local sif file.
 
 cl() {
-  test ! -d "$LOCAL_SIFS_ROOT" && 
-    echo "LOCAL_SIFS_ROOT not set." && return 1
+  if test ! -d "$LOCAL_SIFS_ROOT"; then
+    echo "Using current directory for LOCAL_SIFS_ROOT"
+    LOCAL_SIFS_ROOT=$(pwd)
+  fi
 
   test -n "$1" && . $1 && LOCAL_SIF="$1" && return 0
 
