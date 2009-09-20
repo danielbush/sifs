@@ -22,9 +22,7 @@ if ! test -n "$BASH"; then
   echo "Not starting SIFS - you need a bash shell."
   return 1
 fi
-if test -d "$SIFS_HOME" -a -e "$SIFS_CONF"; then
-  echo "SIFS vars are set."
-else
+if test ! -d "$SIFS_HOME" -o ! -e "$SIFS_CONF"; then
   echo "Either SIFS_HOME or SIFS_CONF is not set, SIFS can't continue."
   echo "Set SIFS_HOME to where you installed sifs;"
   echo "Set SIFS_CONF to the location of your sifs.conf file."
