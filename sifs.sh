@@ -135,6 +135,22 @@ sif() {
 
 }
 
+# Source a sif file without updating SIF_* variables.
+
+sil() {
+  if test -z "$1"; then
+    echo "sil: needs name of sil file." >&2
+    return 1
+  fi
+
+  test -f $1.sif && . $1.sif && return 0
+  test -f $1 && . $1 && return 0
+  test -f $SIFS_DIR/$1.sif && . $SIFS_DIR/$1.sif && return 0
+  test -f $SIFS_DIR/$1 && . $SIFS_DIR/$1 && return 0
+  return 1
+
+}
+
 c() {
 
   # If we want to run 'c' from a script.

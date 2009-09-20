@@ -1,4 +1,11 @@
 DB
+20-Sep-09
+- get rid of 'd' and sifs.conf; instead, use symlinking
+  to add other repos.
+  I like the idea of having less moving parts.
+- FIXME: can we handle symlink files? at the moment we can handle
+  symlink directories.
+
 17-Sep-09
 - cl uses find to locate sif files in LOCAL_SIRS_ROOT
   This would be set by a normal sif file.
