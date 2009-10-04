@@ -1,4 +1,51 @@
 DB
+
+4-Oct-09
+- 
+  These are all the different forms:
+
+  c <name> (SIFS_DIR and sif extension required)
+  c <> (interactive)
+  sif <name*>
+    - uses c <name> after trying out all variations of name
+      and finding one
+  c.include <name> (without SIFS_DIR or .sif extension)
+    - had to create this when setting up subdirectories in
+      SIFS_DIR.
+  local forms:
+  cl
+
+  I have to resolve this mess.
+
+- make 'sif' interactive
+  Typing sif <pattern>
+  will get sif to look for all possible files in SIFS_DIR
+  and its subdirs.
+  Maybe it should be the 'c <pattern>'.
+  But up to now, 'c' has been very precise when used with
+  an argument.
+
+- SIFS_ROOT_DIR
+  To be setup at the beginning of the shell session.
+  sifs.conf should store this.
+  When performing operations against the whole sif
+  repo, we use this rather than SIFS_DIR.
+  We might also stop '..' from taking use above
+  SIFS_ROOT_DIR when using 'c' interactively.
+
+- I'm beginning to think that sifs should just assume you
+  are interactive.
+  If you want to use a sif file in a cron or automated script
+  you should test that the sif file will work in isolation
+  from the sifs system
+  or create a new script which the sif file can reference.
+  Or write your sif file so that when you source it it 
+  won't cause an error trying to load a sif-related utility
+  such as the 'sil' command.
+  eg  use the 'which' command to test if 'sil' is available
+  before running it.
+
+
 3-Oct-09
 - I want my HOME.sif to load up automatically when I log in
   with an optional help message.
