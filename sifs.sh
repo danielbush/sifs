@@ -196,7 +196,7 @@ c() {
   i= ; j=
   select i in $(sifs.ls|sort); do
     echo "file is $SIFS_DIR/$i"
-    test -n "$i" && c.include $i && sifs.histfile "$SIFS_DIR/$i" && break
+    test -n "$i" && c.include $i && break
     case "$REPLY" in
     quit) break ;;
     "..") c.include $REPLY; break ;; 
@@ -239,6 +239,7 @@ c.include() {
         . $1.sif
         sifs.push $SIFS_INCLUDE
         SIFS_rechoose="no"
+        sifs.histfile "$SIFS_DIR/$1" 
         return 0
       fi
     else
@@ -537,9 +538,11 @@ sifs.histfile.truncate() {
 # -- DB, Sun Oct  4 17:14:45 EST 2009
 
 j() {
+  echo "Type 'q' to quit"
   local i;
   select i in $(tac $SIFS_HISTFILE); do
-    c $i; break;
+    test -n "$i" && sif $i && sifs.histfile $i
+    break
   done
 }
 
