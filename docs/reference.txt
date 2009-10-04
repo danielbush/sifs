@@ -10,7 +10,9 @@
   d            Change sifs location (SIFS_DIR). 'c' will run this
                automatically if SIFS_DIR is not set.
   c            Source an include file from SIFS_DIR
-  j            Select a previous SIF file; up to 9 unique are stored.
+  j            Select a previous SIF file;
+               Uses SIFS_HISTFILE.  Prior to this up to 9 unique were stored
+               in the shell session.
   sif [name]   Tries to intelligently load a sif file into the current
                shell (either interactive or batch mode).
                If you've already selected a SIFS_DIR, then you can
@@ -67,6 +69,9 @@
   sifs.template [file_name]  - Create a sif file using sifs template in current directory
   sifs.edit                  - Edit the SIFS_HOME/sifs.sh
   sifs.add file_name         - runs sifs.template and outputs to \$SIFS_DIR\file_name.sif
+  sifs.doc                   - View the docs/reference.txt file; uses 'less'
+  sifs.histfile [file_name]  - Add file_name to SIFS_HISTFILE. Assumes full path.
+  sifs.histfile.clear        - Clear SIFS_HISTFILE
   sifs.ls                    - List .sif files in SIFS_DIR and any subdirectories.
                                Used by the 'c' command.
   sifs.mkdir dir_name        - Makes a directory under SIFS_DIR              

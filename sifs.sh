@@ -35,6 +35,7 @@ fi
 export OLD_HOME=$HOME
 # TODO: Set bash history and similar to use OLD_HOME settings ? -- DBush 25-Mar-09
 
+export SIFS_HISTFILE=$OLD_HOME/.sifs_history
 
 hh() {
 less <<-EOF
@@ -69,6 +70,11 @@ less <<-EOF
                   eg SIFS_HOME=/home/danb/sifs.sys  or /etc/sifs.sys
                   or whatever you want to call it.
                   I often reserve 'sifs' by itself for a SIFS_DIR.
+  SIFS_HISTFILE: 
+                $SIFS_HISTFILE         
+                - Stores recent sif files loaded interactively in
+                  your shell.  You can access these via the 'j'
+                  command.
   DEFAULT_SIFS_DIR:
                 $DEFAULT_SIFS_DIR
                 - If set, the default sifs dir to use when the sifs
@@ -83,7 +89,7 @@ less <<-EOF
                   Type 'il' to load/reload it.
   ======================================================================
 
-  $(cat $SIFS_HOME/docs/reference.txt)
+  $(sifs.doc)
 EOF
 }
 
@@ -150,6 +156,7 @@ sil() {
 }
 
 c() {
+  local i;
 
   # If we want to run 'c' from a script.
   # First arg should be an aboslute path to a sif file
@@ -188,7 +195,8 @@ c() {
   SIFS_rechoose=no
   i= ; j=
   select i in $(sifs.ls|sort); do
-    test -n "$i" && c.include $i && break
+    echo "file is $SIFS_DIR/$i"
+    test -n "$i" && c.include $i && sifs.histfile "$SIFS_DIR/$i" && break
     case "$REPLY" in
     quit) break ;;
     "..") c.include $REPLY; break ;; 
@@ -215,6 +223,7 @@ c() {
 }
 
 c.include() {
+  local i;
     if test -n "$1"; then
       if test "$1" = ".."; then
         sifs.up
@@ -240,6 +249,7 @@ c.include() {
 # Source a local sif file.
 
 cl() {
+  local i;
   if test ! -d "$LOCAL_SIFS_ROOT"; then
     echo "Using current directory for LOCAL_SIFS_ROOT"
     LOCAL_SIFS_ROOT=$(pwd)
@@ -485,3 +495,54 @@ sifs.push.pack() {
   done
 }
 
+#--------------------------------------------------------
+# Sifs history file
+
+sifs.histfile() {
+  case "$1" in
+  "");;
+  *)
+    echo $1 >> $SIFS_HISTFILE
+    sifs.histfile.truncate
+  ;;
+  esac
+}
+
+sifs.histfile.clear() {
+  cat /dev/null >$SIFS_HISTFILE
+}
+
+sifs.histfile.edit() {
+  $EDITOR $SIFS_HISTFILE
+}
+
+# The hist file is ordered oldest (top) to most recent (bottom).
+# Weed out duplicate entries, retaining the most recent.
+# Restrict final size to 20 entries.
+
+sifs.histfile.truncate() {
+  local line
+  cat /dev/null >$SIFS_HISTFILE.reverse
+  tac $SIFS_HISTFILE | while read line; do
+    if ! grep -q "$line" $SIFS_HISTFILE.reverse; then
+      echo $line >>$SIFS_HISTFILE.reverse
+    fi
+  done
+  tac $SIFS_HISTFILE.reverse | tail -n 40  >$SIFS_HISTFILE
+  test -f $SIFS_HISTFILE.reverse && rm $SIFS_HISTFILE.reverse
+}
+
+# Rewrite j().
+# Not sure what to do with the old j().
+# -- DB, Sun Oct  4 17:14:45 EST 2009
+
+j() {
+  local i;
+  select i in $(tac $SIFS_HISTFILE); do
+    c $i; break;
+  done
+}
+
+sifs.doc() {
+  less $SIFS_HOME/docs/reference.txt
+}
