@@ -7,35 +7,10 @@
 # 
 # You are free to use or modify SIFS as you please.
 
-# Include optional dot commands.
-# Unset SIFS_DOT_COMMANDS or set to 'n' to stop.
-# Dot commands  will overwrite command_not_found_handle.
-# Because some people may not like this, 
-# it is not included directly in this file.
-
-case "$SIFS_DOT_COMMANDS" in 
-y|Y) . $SIFS_HOME/dot_commands.sh ;;
-esac
 
 
-if ! test -n "$BASH"; then
-  echo "Not starting SIFS - you need a bash shell."
-  return 1
-fi
-if test ! -d "$SIFS_HOME" -o ! -e "$SIFS_CONF"; then
-  echo "Either SIFS_HOME or SIFS_CONF is not set, SIFS can't continue."
-  echo "Set SIFS_HOME to where you installed sifs;"
-  echo "Set SIFS_CONF to the location of your sifs.conf file."
-  return 1
-fi
-if test -z "$EDITOR"; then
-  echo "Warning: please set EDITOR for proper functionality (in ~/.bashrc etc)."
-fi
+# See docs/reference.txt for official descriptions.
 
-export OLD_HOME=$HOME
-# TODO: Set bash history and similar to use OLD_HOME settings ? -- DBush 25-Mar-09
-
-export SIFS_HISTFILE=$OLD_HOME/.sifs_history
 
 hh() {
 less <<-EOF
@@ -75,11 +50,10 @@ less <<-EOF
                 - Stores recent sif files loaded interactively in
                   your shell.  You can access these via the 'j'
                   command.
-  DEFAULT_SIFS_DIR:
-                $DEFAULT_SIFS_DIR
-                - If set, the default sifs dir to use when the sifs
-                  system starts up.  Only useful if you have multiple
-                  sifs repos.
+  SIFS_ROOT_DIR:
+                $SIFS_ROOT_DIR
+                - top level SIFS_DIR.  Usually corresponds to entires
+                  in SIFS_CONF .
   LOCAL_SIFS_ROOT
                 $LOCAL_SIFS_ROOT
                 - If set, is the location for searching for local sif files.
@@ -93,17 +67,76 @@ less <<-EOF
 EOF
 }
 
-# See docs/reference.txt for official descriptions.
+#------------------------------------------------------------------------
+# INIT of SIFS
+#
+# Gets called at the bottom...
 
-i() {
- echo $SIFS_INCLUDE
- . $SIFS_INCLUDE
+sifs.init() {
+  # Include optional dot commands.
+  # Unset SIFS_DOT_COMMANDS or set to 'n' to stop.
+  # Dot commands  will overwrite command_not_found_handle.
+  # Because some people may not like this, 
+  # it is not included directly in this file.
+
+  case "$SIFS_DOT_COMMANDS" in 
+    y|Y) . $SIFS_HOME/dot_commands.sh ;;
+  esac
+
+
+  if ! test -n "$BASH"; then
+    echo "Not starting SIFS - you need a bash shell."
+    return 1
+  fi
+  if test ! -d "$SIFS_HOME" -o ! -e "$SIFS_CONF"; then
+    echo "Either SIFS_HOME or SIFS_CONF is not set, SIFS can't continue."
+    echo "Set SIFS_HOME to where you installed sifs;"
+    echo "Set SIFS_CONF to the location of your sifs.conf file."
+    return 1
+  fi
+  if test -z "$EDITOR"; then
+    echo "Warning: please set EDITOR for proper functionality (in ~/.bashrc etc)."
+  fi
+
+  export OLD_HOME=$HOME
+  # TODO: Set bash history and similar to use OLD_HOME settings ? -- DBush 25-Mar-09
+
+  export SIFS_HISTFILE=$OLD_HOME/.sifs_history
+
+  if test -z "$SIFS_DIR"; then
+    sifs.cd.root $(head -n 1 $SIFS_CONF) 
+  fi
+  #if test -z "$SIFS_DIR"; then d; return $?; fi
+  if test -z "$SIFS_DIR"; then 
+    cat <<-EOF 
+    'c' can't continue.  SIFS_DIR is not set
+    and there doesn't seem to be an entry in your
+    SIFS_CONF file ($SIFS_CONF).
+EOF
+    return 1;
+  fi
+}
+
+#------------------------------------------------------------------------
+# CHANGING ROOT SIFS DIR (AS LISTED IN SIFS_CONF)
+#
+# Should get called once during sifs.init
+# or when we change sifs repo via SIFS_CONF.
+# cf sifs.cd().
+
+sifs.cd.root() {
+  export SIFS_DIR=$1
+  export SIFS_ROOT_DIR=$1
+}
+
+sifs.cd() {
+  export SIFS_DIR=$1
 }
 
 d() {
 
   if test -n "$1"; then
-    export SIFS_DIR=$1
+    sifs.cd $1
   else
 
   # Interactive mode...
@@ -116,7 +149,7 @@ d() {
     if test "$REPLY" = "q"; then
       break
     fi
-    export SIFS_DIR=$d
+    sifs.cd.root $d
     break
   done
 
@@ -125,7 +158,17 @@ d() {
   c
 }
 
+
+#------------------------------------------------------------------------
+# CHANING SIFS FILES
+
+i() {
+ echo $SIFS_INCLUDE
+ . $SIFS_INCLUDE
+}
+
 sif() {
+  local i
   if test -z "$1"; then
     echo "sif: needs name of sif file." >&2
     return 1
@@ -135,25 +178,23 @@ sif() {
   test -f $1 && c $1 && return 0
   test -f $SIFS_DIR/$1.sif && c $SIFS_DIR/$1.sif && return 0
   test -f $SIFS_DIR/$1 && c $SIFS_DIR/$1 && return 0
+
+  echo "Type 'q' to quit"
+  select i in $(sifs.find $1); do
+    test -n "$i" && c $i.sif
+    return 0
+  done
+
   return 1
 
 }
 
-# Source a sif file without updating SIF_* variables.
-
-sil() {
-  if test -z "$1"; then
-    echo "sil: needs name of sil file." >&2
-    return 1
-  fi
-
-  test -f $1.sif && . $1.sif && return 0
-  test -f $1 && . $1 && return 0
-  test -f $SIFS_DIR/$1.sif && . $SIFS_DIR/$1.sif && return 0
-  test -f $SIFS_DIR/$1 && . $SIFS_DIR/$1 && return 0
-  return 1
-
+sifs.find() {
+  # Show the full directory path in case sif files have the same
+  # file name.
+  find -L $SIFS_ROOT_DIR -iname "*$1*" -type f | grep '\.sif$' | sed -e 's/\.sif$//'
 }
+
 
 c() {
   local i;
@@ -180,11 +221,6 @@ c() {
 
   # Go into interactive mode...
 
-  if test -z "$SIFS_DIR" -a -n "$DEFAULT_SIFS_DIR"; then d "$DEFAULT_SIFS_DIR"; return $?; fi
-  if test -z "$SIFS_DIR"; then d; return $?; fi
-  if test -z "$SIFS_DIR"; then return 1; fi
-
-
   while true; do
   pushd $SIFS_DIR >/dev/null  # SIFS_DIR may change.
 
@@ -195,7 +231,6 @@ c() {
   SIFS_rechoose=no
   i= ; j=
   select i in $(sifs.ls|sort); do
-    echo "file is $SIFS_DIR/$i"
     test -n "$i" && c.include $i && break
     case "$REPLY" in
     quit) break ;;
@@ -247,6 +282,49 @@ c.include() {
     fi
 }
 
+e() {
+  $EDITOR $SIFS_INCLUDE
+}
+
+r() {
+  if test -n $OLD_HOME; then
+    export HOME=$OLD_HOME
+  fi
+  # We don't want help message to show.
+  # People will assume the old include is still
+  # active.
+  unset h
+  test "$1" != "--soft" && unset SIFS_DIR
+  test "$1" != "--soft" && unset SIFS_INCLUDE
+  . $SIFS_HOME/sifs.sh
+}
+
+rc() {
+  r;c
+}
+
+#------------------------------------------------------------------------
+# SIL - simple include libraries
+
+# Source a sif file without updating SIF_* variables.
+
+sil() {
+  if test -z "$1"; then
+    echo "sil: needs name of sil file." >&2
+    return 1
+  fi
+
+  test -f $1.sif && . $1.sif && return 0
+  test -f $1 && . $1 && return 0
+  test -f $SIFS_DIR/$1.sif && . $SIFS_DIR/$1.sif && return 0
+  test -f $SIFS_DIR/$1 && . $SIFS_DIR/$1 && return 0
+  return 1
+
+}
+
+#------------------------------------------------------------------------
+# CHANGING LOCAL SIFS FILES
+
 # Source a local sif file.
 
 cl() {
@@ -293,26 +371,9 @@ el() {
   $EDITOR $LOCAL_SIF
 }
 
-e() {
-  $EDITOR $SIFS_INCLUDE
-}
 
-r() {
-  if test -n $OLD_HOME; then
-    export HOME=$OLD_HOME
-  fi
-  # We don't want help message to show.
-  # People will assume the old include is still
-  # active.
-  unset h
-  test "$1" != "--soft" && unset SIFS_DIR
-  test "$1" != "--soft" && unset SIFS_INCLUDE
-  . $SIFS_HOME/sifs.sh
-}
-
-rc() {
-  r;c
-}
+#------------------------------------------------------------------------
+# BOOKMARK FUNCTIONS
 
 m() {
   case "$1" in
@@ -345,8 +406,8 @@ gg() {
   fi
 }
 
+#------------------------------------------------------------------------
 # sifs.* commands
-#-----------------------------------------------------
 
 sifs.conf() {
   $EDITOR $SIFS_CONF
@@ -440,6 +501,11 @@ sifs.quickstart() {
   less $SIFS_HOME/QUICKSTART
 }
 
+sifs.doc() {
+  less $SIFS_HOME/docs/reference.txt
+}
+
+#------------------------------------------------------------------------
 # SIFS History Tracking
 #
 # Record sif file that the user selects when using 'c'.
@@ -496,7 +562,7 @@ sifs.push.pack() {
   done
 }
 
-#--------------------------------------------------------
+#------------------------------------------------------------------------
 # Sifs history file
 
 sifs.histfile() {
@@ -546,6 +612,5 @@ j() {
   done
 }
 
-sifs.doc() {
-  less $SIFS_HOME/docs/reference.txt
-}
+
+sifs.init
