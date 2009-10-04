@@ -1,10 +1,73 @@
 DB
+3-Oct-09
+- I want my HOME.sif to load up automatically when I log in
+  with an optional help message.
+- When we c/i a file, touch it so that we can record when it
+  was last changed to via the filesystem.
+  Have a routine that lists the last x recently used sifs.
+  On a shared repository, this won't be so useful; the whole
+  point is to help you remember where you were; the 'j' command
+  does this within a given shell session.
+- Might be better just to have a history file stored in ~/.sif_history
+- A section on how I use sif
+  Less clutter 
+  - only have a few terminals up on my desktop instead of lots
+  - I bring up a terminal and quickly jump to the sif file
+    I want.  When I'm finished I shut down the terminal.
+    - Sometimes I'm doing one thing but quickly want to add something
+      for another project.  So I quickly open up a new terminal 
+      (ctrl-alt+t), jump to the sif, do the work and close; resume
+      work in previous terminal.
+    - Sometimes I need to do something on the same project before
+      continuing.  I create a new terminal window, jump to the same
+      sif file, do the work.  Hop back to the original and continue.
+      Maybe there are 2 things.  In which case I create 2 extra terminals.
+      Often I'll arrange these spatiallyl starting from the top left.
+      Do the work in one and then the other.  Go back to the original
+      terminal.
+      - Being able alt-tab or alt-w between windows is good (for me)
+      - spatially arranging secondary windows with sif sessions is good
+  - less use of tabbing; gnome-terminal tabbing is ok for some
+    situations but I find it hard to handle in general
+  - less screen; screen is really cool and I have some screen
+    scripts in some of my sif files and I have remote screen
+    sessions that stay up for a long time between ssh sessions.
+    But 
+  - faster the better;
+    Anything that speeds up your ability to access the thing you
+    just thought about is a big deal.
+    Some simple things:
+    In your go() function, use globbing
+    go() {
+      l*|lang|language-tests) cd ... ;;
+    }
+    Here I only have to type 'go l' to get to my language tests.
+
+27-Sep-09
+- cl:
+  Do 'find' on pwd down; results should go in a select.
+  Do we really need LOCAL_SIF_ROOT??
+- tracking
+  - track when you last used a sif file
+  - need to be able to remove deleted sif files from history
+- proxy/piggyback sif
+  - the sif in SIFS_DIR merely loads up a sif located with
+    the project.
 20-Sep-09
 - get rid of 'd' and sifs.conf; instead, use symlinking
   to add other repos.
   I like the idea of having less moving parts.
 - FIXME: can we handle symlink files? at the moment we can handle
   symlink directories.
+
+- sil and possibly sif command should search from the top
+  level SIFS_DIR for the sif file.
+  If more than one is found, haven't decided is a select should
+  be done or the first one picked.
+  example: I'm root, I'm starting a server via a an admin sif,
+  but I want to check netstat using a net.ls script in another
+  sif file (root.sif).  I type 'sil root' and it should find it
+  and source it.
 
 17-Sep-09
 - cl uses find to locate sif files in LOCAL_SIRS_ROOT
