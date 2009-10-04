@@ -181,7 +181,8 @@ sif() {
 
   echo "Type 'q' to quit"
   select i in $(sifs.find $1); do
-    test -n "$i" && c $i.sif
+    test -n "$i" && c $i.sif && sifs.histfile $i.sif
+    # TODO: c <name> should probably call sifs.histfile.
     return 0
   done
 
