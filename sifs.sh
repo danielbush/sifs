@@ -174,10 +174,10 @@ sif() {
     return 1
   fi
 
-  test -f $1.sif && c $1.sif && return 0
-  test -f $1 && c $1 && return 0
-  test -f $SIFS_DIR/$1.sif && c $SIFS_DIR/$1.sif && return 0
-  test -f $SIFS_DIR/$1 && c $SIFS_DIR/$1 && return 0
+  test -f $1.sif && c $1.sif && echo $1.sif && return 0
+  test -f $1 && c $1 && echo $1 && return 0
+  test -f $SIFS_DIR/$1.sif && c $SIFS_DIR/$1.sif && echo $SIFS_DIR/$1.sif && return 0
+  test -f $SIFS_DIR/$1 && c $SIFS_DIR/$1 && echo $SIFS_DIR/$1 && return 0
 
   echo "Type 'q' to quit"
   select i in $(sifs.find $1); do
@@ -193,7 +193,8 @@ sif() {
 sifs.find() {
   # Show the full directory path in case sif files have the same
   # file name.
-  find -L $SIFS_ROOT_DIR -iname "*$1*" -type f | grep '\.sif$' | sed -e 's/\.sif$//'
+  #find -L $SIFS_ROOT_DIR -iname      "*$1*.sif" -type f | grep '\.sif$' | sed -e 's/\.sif$//'
+  find -L $SIFS_ROOT_DIR -iwholename "*$1*.sif" -type f | grep '\.sif$' | sed -e 's/\.sif$//'
 }
 
 
