@@ -1,4 +1,5 @@
   Functions (RESERVED names)
+  -------------------------------------------------------------------------------
 
   hh                         - Output this help message.  General SIFS reference.
   sifs.quickstart            - Setting up and using SIFS.
@@ -10,29 +11,38 @@
   d            Change sifs location (SIFS_DIR). 'c' will run this
                automatically if SIFS_DIR is not set.
   c            Source an include file from SIFS_DIR
+  c </path/to/name.sif>
+               At the moment, this is the raw routine called by 'sif'.
+               <> has to be absolute and include the .sif suffix.
+               Will set SIFS_DIR.  See implementation of j() for why SIFS_DIR
+               is set.
   j            Select a previous SIF file;
                Uses SIFS_HISTFILE.  Prior to this up to 9 unique were stored
                in the shell session.
-  sif [name]   Tries to intelligently load a sif file into the current
-               shell (either interactive or batch mode).
-               If you've already selected a SIFS_DIR, then you can
-               invoke a name of a sif file within SIFS_DIR simply as
-                 sif [name] 
-               where file is [name].sif .
-               However, 'sif' will look for all variants:
-                 [name].sif
-                 [name]  # Assumes the user has suffixed with .sif.
-                 SIFS_DIR/[name].sif
-                 SIFS_DIR/[name]
-               Like 'c [name]', sets SIFS_DIR.
-  c [name]     At the moment, this is the raw routine called by 'sif'.
-               [name] has to be absolute and include the .sif suffix.
-               Will set SIFS_DIR.  See implementation of j() for why SIFS_DIR
-               is set.
-  e            Edit the current included file.
+  sif 
+    <name>
+               Looks for SIFS_DIR/<name>.sif
+               This is similar to typing 'c' and then selecting from 
+               available sif files in your current SIFS_DIR.
+               This first option may be deprecated in future.
+    </path/to/name.sif> 
+               Looks for looks for actual file
+    <pattern>  Failing the above two, returns a selection of all available
+               sif files matching pattern.
 
-  *l COMMANDS
-  These commands are for loading local sif files.
+               Like 'c <...>', sets SIFS_DIR.
+  e            Edit the current included file.
+  r            Reset sifs and your shell; basically set HOME to OLD_HOME (your original HOME).
+  rc           shortcut for running 'r' then 'c'; use this to change to a sif
+               file in a different sif repo to your current one.
+               The main point of 'r' and 'rc' is that they currently reset HOME if the
+               current sifs file has changed it.  Otherwise use 'd'.
+
+
+
+
+  LOCAL SIF FILES
+  -------------------------------------------------------------------------------
   These are files not in a centralised SIFS_DIR and are often loaded
   over an existing sif file.
   cl           Look for local sif files in LOCAL_SIF_ROOT instead of SIFS_DIR
@@ -42,13 +52,11 @@
                LOCAL_SIF was.  'il' will then reload the local file again etc  
   el           Edit local sif file if LOCAL_SIF is set.
 
-  r            Reset sifs and your shell; basically set HOME to OLD_HOME (your original HOME).
-  rc           shortcut for running 'r' then 'c'; use this to change to a sif
-               file in a different sif repo to your current one.
-               The main point of 'r' and 'rc' is that they currently reset HOME if the
-               current sifs file has changed it.  Otherwise use 'd'.
 
 
+
+  HOPPING BETWEEN LOCATIONS ON THE COMMAND-LINE
+  -------------------------------------------------------------------------------
   The following g/m functions are to help you jump about from one location to another.
   m <char>     store current directory in a variable \$STASH_<char>
   m -          clear (unset) all \$STASH_<char>
@@ -62,6 +70,8 @@
   ,<char>      same as: m <char>
 
 
+  OTHER sifs.* FUNCTIONS
+  -------------------------------------------------------------------------------
   sifs.sys                   - cd to SIFS_HOME 
   sifs.go                    - cd to SIFS_DIR  (if you want to delete a file etc) 
   sifs.conf                  - Edit SIFS_CONF
@@ -79,4 +89,42 @@
                                No checking is done; use this only if you have SIFS_DIR set
                                to a subdir of the "sifs.conf-defined" SIFS_DIR.
 
+
+  SIL FILES - simple include library files
+  -------------------------------------------------------------------------------
+  Use sil files for general routines, global variables shared between several
+  sif files.
+
+  Sil files are usually namespaced or written in a way that they 
+  don't clash with the current sif file you are using.
+  For instance, you could define a global go() function in a sil
+  file and have one or more sifs load the sil file and share
+  this function.
+  Or you could namespace the go function eg abc.go() and have
+  your your normal sif go() function call abc.go().
+
+  Try to keep your sil file names unique.  This way you can say
+     sil <name>
+  instead of
+     sil </path/to/name.sil>
+  sil <name> will return the first sil found if more than one.
+
+
+
+  sil
+    <name> - find and load <name>.sil
+    </path/to/name.sil> - find and load fully specified filename.
+
+  sil.find
+    <> - find all sil files
+    <pattern> - find all matching pattern
+
+  sil.edit
+    <> - find all sil files and allow you to edit one or more
+
+  sil.add <name>
+    Add <name>.sil to current SIFS_DIR.
+
+  sil.show
+    Show all sil files and allow you to re-source one of them.
 

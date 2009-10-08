@@ -50,6 +50,11 @@ less <<-EOF
                 - Stores recent sif files loaded interactively in
                   your shell.  You can access these via the 'j'
                   command.
+  SIFS_SILFILE: 
+                $SIFS_SILFILE
+                - A file that records which sil files you have included into your
+                  current shell.
+           
   SIFS_ROOT_DIR:
                 $SIFS_ROOT_DIR
                 - top level SIFS_DIR.  Usually corresponds to entires
@@ -115,6 +120,10 @@ sifs.init() {
 EOF
     return 1;
   fi
+
+  # Reset this file for new session.
+  export SIFS_SILFILE=$OLD_HOME/.sifs_silfile
+  cat /dev/null >$SIFS_SILFILE
 }
 
 #------------------------------------------------------------------------
@@ -174,10 +183,14 @@ sif() {
     return 1
   fi
 
-  test -f $1.sif && c $1.sif && echo $1.sif && return 0
-  test -f $1 && c $1 && echo $1 && return 0
+  # File is completely specified:
+  test -f $1 && echo $1|grep -q '^/' && c $1 && echo $1 && return 0
   test -f $SIFS_DIR/$1.sif && c $SIFS_DIR/$1.sif && echo $SIFS_DIR/$1.sif && return 0
-  test -f $SIFS_DIR/$1 && c $SIFS_DIR/$1 && echo $SIFS_DIR/$1 && return 0
+
+  #test -f $1.sif && c $1.sif && echo $1.sif && return 0
+  #test -f $1 && c $1 && echo $1 && return 0
+  #test -f $SIFS_DIR/$1.sif && c $SIFS_DIR/$1.sif && echo $SIFS_DIR/$1.sif && return 0
+  #test -f $SIFS_DIR/$1 && c $SIFS_DIR/$1 && echo $SIFS_DIR/$1 && return 0
 
   echo "Type 'q' to quit"
   select i in $(sifs.find $1); do
@@ -186,6 +199,7 @@ sif() {
     return 0
   done
 
+  echo "sif: couldn't load requested sif file: $1." >&2
   return 1
 
 }
@@ -308,7 +322,20 @@ rc() {
 #------------------------------------------------------------------------
 # SIL - simple include libraries
 
-# Source a sif file without updating SIF_* variables.
+# Source a sil file.
+# Use sil files for general routines, global variables shared between several
+# sif files etc.
+# Sil files are usually namespaced or written in a way that they 
+# don't clash with the current sif file you are using.
+# For instance, you would probably not define a go() function unless
+# you intend not to use it in your sif files that use the sil file.
+#
+# Try to keep your sil file names unique.  This way you can say
+#    sil <name>
+# instead of
+#    sil </path/to/name.sil>
+# sil <name> will return the first sil found if more than one.
+
 
 sil() {
   local file
@@ -317,20 +344,68 @@ sil() {
     return 1
   fi
 
-  test -f $1.sil           && echo $1.sil           && . $1.sil && return 0
-  test -f $1               && echo $1               && . $1 && return 0
-  test -f $SIFS_DIR/$1.sil && echo $SIFS_DIR/$1.sil && . $SIFS_DIR/$1.sil && return 0
-  test -f $SIFS_DIR/$1     && echo $SIFS_DIR/$1     && . $SIFS_DIR/$1 && return 0
+  # For SIF_SILFILE/sil.show which specifies exact filepath:
+  if test -f $1; then
+    echo $1
+    . $1
+    return 0
+  fi
 
-  file=$(sil.find $1)
-  test -n "$file"          && echo $file.sil        && . $file.sil && return 0
+  file=$(sil.find $1|head -n 1)
 
+  if test -n "$file"; then
+    echo $file.sil
+    if ! grep -q $file.sil $SIFS_SILFILE; then
+      echo $file.sil >>$SIFS_SILFILE
+    fi
+    . $file.sil
+    return 0
+  fi
+
+  echo "Couldn't find sil file."
   return 1
 
 }
 
 sil.find() {
-  find -L $SIFS_ROOT_DIR -iwholename "*$1*.sil" -type f | grep '\.sil$' | sed -e 's/\.sil$//'
+  #find -L $SIFS_ROOT_DIR -iwholename "*$1*.sil" -type f | grep '\.sil$' | sed -e 's/\.sil$//'
+  find -L $SIFS_ROOT_DIR -iname "*$1*.sil" -type f | grep '\.sil$' | sed -e 's/\.sil$//'
+    # Use -iname because we want to search purely on the sil name.
+    # I currently view sil files as a global collection of library routines.
+    # For the sif() function, it makes more sense to be able to search on 
+    # -iwholename.
+}
+
+sil.show() {
+  local i
+  echo "Select a file to reload it into your shell or "
+  echo "'q' to quit"
+  select i in $(cat $SIFS_SILFILE); do
+    case $REPLY in q*) break;; esac
+    sil $i
+    break
+  done
+}
+
+sil.edit() {
+  local i
+  echo "'q' to quit"
+  select i in $(sil.find); do
+    case $REPLY in q*) break;; esac
+    $EDITOR $i.sil
+  done
+}
+
+sil.add() {
+  echo -n "Create $SIFS_DIR/$1.sil? [y] "
+  read resp
+  case "$resp" in y*|Y*|"");; *)return 1;; esac
+  touch $SIFS_DIR/$1.sil
+
+  echo -n "Do you want to edit? [y] "
+  read resp
+  case "$resp" in y*|Y*|"");; *)return 1;; esac
+  $EDITOR $SIFS_DIR/$1.sil
 }
 
 #------------------------------------------------------------------------
