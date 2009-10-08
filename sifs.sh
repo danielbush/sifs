@@ -225,7 +225,7 @@ c() {
 
   if test -n "$1"; then
     if test -f "$1"; then
-      # TODO: use 'd' and 'c.include' here...
+      r --soft  # Reset.
       export SIFS_DIR=$(dirname $1)
       export SIFS_INCLUDE=$1
       . $1
@@ -281,14 +281,18 @@ c.include() {
         SIFS_rechoose="yes"
         return 0
       elif test -d "$1" -o -h "$1"; then
-        export SIFS_DIR=$SIFS_DIR/$1
-        SIFS_rechoose="yes"
-        return 0
+        if pushd $SIFS_DIR/$1 >/dev/null 2>&1 ; then
+          popd >/dev/null
+          export SIFS_DIR=$SIFS_DIR/$1
+          SIFS_rechoose="yes"
+          return 0
+        else
+          c $SIFS_DIR/$1.sif
+          return 0
+        fi
       elif test -f $1.sif; then
-        r --soft  # Reset.
-        export SIFS_INCLUDE=$SIFS_DIR/$1.sif
-        . $1.sif
-        sifs.push $SIFS_INCLUDE
+        c $SIFS_DIR/$1.sif
+        #sifs.push $SIFS_INCLUDE # Get rid of?
         SIFS_rechoose="no"
         sifs.histfile "$SIFS_DIR/$1" 
         return 0
