@@ -311,17 +311,26 @@ rc() {
 # Source a sif file without updating SIF_* variables.
 
 sil() {
+  local file
   if test -z "$1"; then
     echo "sil: needs name of sil file." >&2
     return 1
   fi
 
-  test -f $1.sif && . $1.sif && return 0
-  test -f $1 && . $1 && return 0
-  test -f $SIFS_DIR/$1.sif && . $SIFS_DIR/$1.sif && return 0
-  test -f $SIFS_DIR/$1 && . $SIFS_DIR/$1 && return 0
+  test -f $1.sil           && echo $1.sil           && . $1.sil && return 0
+  test -f $1               && echo $1               && . $1 && return 0
+  test -f $SIFS_DIR/$1.sil && echo $SIFS_DIR/$1.sil && . $SIFS_DIR/$1.sil && return 0
+  test -f $SIFS_DIR/$1     && echo $SIFS_DIR/$1     && . $SIFS_DIR/$1 && return 0
+
+  file=$(sil.find $1)
+  test -n "$file"          && echo $file.sil        && . $file.sil && return 0
+
   return 1
 
+}
+
+sil.find() {
+  find -L $SIFS_ROOT_DIR -iwholename "*$1*.sil" -type f | grep '\.sil$' | sed -e 's/\.sil$//'
 }
 
 #------------------------------------------------------------------------
