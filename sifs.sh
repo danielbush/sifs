@@ -294,7 +294,7 @@ c.include() {
         c $SIFS_DIR/$1.sif
         #sifs.push $SIFS_INCLUDE # Get rid of?
         SIFS_rechoose="no"
-        sifs.histfile "$SIFS_DIR/$1" 
+        sifs.histfile "$SIFS_DIR/$1.sif" 
         return 0
       fi
     else
