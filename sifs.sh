@@ -121,9 +121,15 @@ EOF
     return 1;
   fi
 
-  # Reset this file for new session.
-  export SIFS_SILFILE=/tmp/$$.sifs_silfile
-  cat /dev/null >$SIFS_SILFILE
+  # sil files are specific to a given bash shell...
+  # This init function may get called several times
+  # during it.
+
+  if ! test "$SIFS_SILFILE" = "/tmp/$$.sifs_silfile"; then
+    SIFS_SILFILE=/tmp/$$.sifs_silfile
+    cat /dev/null >$SIFS_SILFILE
+  fi
+  export SIFS_SILFILE
 }
 
 #------------------------------------------------------------------------
