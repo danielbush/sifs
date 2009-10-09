@@ -122,7 +122,7 @@ EOF
   fi
 
   # Reset this file for new session.
-  export SIFS_SILFILE=$OLD_HOME/.sifs_silfile
+  export SIFS_SILFILE=/tmp/$$.sifs_silfile
   cat /dev/null >$SIFS_SILFILE
 }
 
@@ -344,8 +344,10 @@ rc() {
 sil() {
   local file
   if test -z "$1"; then
-    echo "sil: needs name of sil file." >&2
-    return 1
+    sil.show
+    return 0
+    #echo "sil: needs name of sil file." >&2
+    #return 1
   fi
 
   # For SIF_SILFILE/sil.show which specifies exact filepath:
