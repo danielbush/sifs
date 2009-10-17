@@ -1,6 +1,28 @@
 DB
 
+12-Oct-09
+- bookmark todo pattern
+  provide a generalised version of the sifs histfile that
+  records last 20 things done or accessed.
+  A good example is recording your todo's or readme's or
+  other working files.
+  You can see which ones were last used and quickly jump
+  to them - maybe using a todo.sil file.
+6-Oct-09
+- We should put in a default sif file; or use sif <file>
+  in .bashrc if we want to load up a particular sif file.
 4-Oct-09
+-
+  Sourcing file type operations:
+  1) sif files
+     - c,i,e
+  2) local sif files
+     - cl,il,el
+  3) sil files
+     - these are intended as libraries, helper routines
+       not fully-fledged sif files
+     - up to you to namespace them so they don't clash
+       with your sif files
 - 
   These are all the different forms:
 

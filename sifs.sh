@@ -402,10 +402,16 @@ sil.show() {
 sil.edit() {
   local i
   echo "'q' to quit"
-  select i in $(sil.find); do
-    case $REPLY in q*) break;; esac
-    $EDITOR $i.sil
-  done
+  if test -n "$1"; then
+    file=$(sil.find $1|head -n 1)
+    test -z "$file" && echo "Can't find sil file." && return 1
+    $EDITOR $file.sil
+  else
+    select i in $(sil.find); do
+      case $REPLY in q*) break;; esac
+      $EDITOR $i.sil
+    done
+  fi
 }
 
 sil.add() {
