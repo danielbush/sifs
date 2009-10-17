@@ -203,8 +203,8 @@ sif() {
 
   echo "Type 'q' to quit"
   select i in $(sifs.find $1); do
-    test -n "$i" && c $i.sif && sifs.histfile $i.sif
-    # TODO: c <name> should probably call sifs.histfile.
+    test -n "$i" && c $i.sif && sifs.histfile.track $i.sif
+    # TODO: c <name> should probably call sifs.histfile.track.
     return 0
   done
 
@@ -301,9 +301,8 @@ c.include() {
         fi
       elif test -f $1.sif; then
         c $SIFS_DIR/$1.sif
-        #sifs.push $SIFS_INCLUDE # Get rid of?
         SIFS_rechoose="no"
-        sifs.histfile "$SIFS_DIR/$1.sif" 
+        sifs.histfile.track "$SIFS_DIR/$1.sif" 
         return 0
       fi
     else
@@ -613,73 +612,15 @@ sifs.doc() {
 }
 
 #------------------------------------------------------------------------
-# SIFS History Tracking
-#
-# Record sif file that the user selects when using 'c'.
-# Up to 9: SIFS1 ... SIFS9
-# This is an interactive feature.
-# Use full path to sif file in case a different SIFS_DIR
-# was used (see 'c' for this).
-
-j() {
-  echo "Type 'q' to quit"
-  select i in \
-    $SIFS1 $SIFS2 $SIFS3 \
-    $SIFS4 $SIFS5 $SIFS6 \
-    $SIFS7 $SIFS8 $SIFS9
-  do
-    # 'c <name>' doesn't call sifs.push; only 'c' does.
-    test -n "$i" && c $i && sifs.push $i && break
-    break
-  done
-}
-
-# Move SIFS1 to SIFS2, SIFS2 to ... , ... SIFS9 to nowhere .
-
-sifs.push() {
-  test -z "$1" && echo "Usage: sifs.push <sif-file>" && return 1
-  sifs.push.pack $1
-  for i in 9 8 7 6 5 4 3 2 1; do
-    case "$i" in 1) continue;; esac
-    # i => SIFS[i] ; j => SIFS[i-1]
-    let j=$i-1; eval "SIFSj=\$SIFS$j"
-    if test -n "$SIFSj"; then
-      eval "SIFS$i=\$SIFS$j"
-    fi
-    eval "SIFS$j="
-  done
-  SIFS1=$1
-}
-
-# Remove any blank SIFS$i and renumber from 1.
-# Remove $1 if it is in the list.
-
-sifs.push.pack() {
-  let j=1
-  for i in 1 2 3 4 5 6 7 8 9; do
-    eval "SIFSi=\$SIFS$i"
-    if test -n "$SIFSi" -a "$SIFSi" != "$1" ; then 
-      eval "local SIFStmp$j=\$SIFS$i"
-      let j+=1
-    fi
-  done
-  for i in 1 2 3 4 5 6 7 8 9; do
-    eval "local SIFStmpi=\$SIFStmp$i"
-    eval "SIFS$i=\$SIFStmpi"
-  done
-}
-
-#------------------------------------------------------------------------
 # Sifs history file
 
-sifs.histfile() {
-  case "$1" in
-  "");;
-  *)
+sifs.histfile.track() {
+  touch $SIFS_HISTFILE
+  if test -e "$1"; then
+    grep -v "^${1}$" $SIFS_HISTFILE >$SIFS_HISTFILE.tmp
+    mv $SIFS_HISTFILE.tmp $SIFS_HISTFILE
     echo $1 >> $SIFS_HISTFILE
-    sifs.histfile.truncate
-  ;;
-  esac
+  fi
 }
 
 sifs.histfile.clear() {
@@ -690,41 +631,24 @@ sifs.histfile.edit() {
   $EDITOR $SIFS_HISTFILE
 }
 
-# The hist file is ordered oldest (top) to most recent (bottom).
-# Weed out duplicate entries, retaining the most recent.
-# Restrict final size to 20 entries.
-
-sifs.histfile.truncate() {
-  local line
-  cat /dev/null >$SIFS_HISTFILE.reverse
-  tac $SIFS_HISTFILE | while read line; do
-    if ! grep -q "$line" $SIFS_HISTFILE.reverse; then
-      echo $line >>$SIFS_HISTFILE.reverse
-    fi
-  done
-  tac $SIFS_HISTFILE.reverse | tail -n 40  >$SIFS_HISTFILE
-  test -f $SIFS_HISTFILE.reverse && rm $SIFS_HISTFILE.reverse
-}
-
-# Rewrite j().
-# Not sure what to do with the old j().
-# -- DB, Sun Oct  4 17:14:45 EST 2009
-
 j() {
   echo "Type 'q' to quit"
   local i;
   select i in $(tac $SIFS_HISTFILE); do
-    test -n "$i" && sif $i && sifs.histfile $i
+    test -n "$i" && sif $i && sifs.histfile.track $i
     break
   done
 }
 
+#------------------------------------------------------------------------
+# Sifs.go help function
+#
 # Helper function for use in your sif files.
+
+SIFS_GO=/tmp/$$.sifs.go.histfile
 
 # Find directory or file matching first several characters
 # in a given location.
-
-SIFS_GO=/tmp/$$.sifs.go.histfile
 
 sifs.go(){
   test -z "$2" -a -z "$1" && \

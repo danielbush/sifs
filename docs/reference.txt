@@ -138,3 +138,6 @@
   sil.show
     Show all sil files and allow you to re-source one of them.
 
+  FIXME/TODO
+  sil.all should list all sil files.  sil.show/edit should work
+  on current sil files.
