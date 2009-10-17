@@ -50,6 +50,9 @@ less <<-EOF
                 - Stores recent sif files loaded interactively in
                   your shell.  You can access these via the 'j'
                   command.
+  SIFS_GO:      $SIFS_GO         
+                - File that records actions performed using sifs.go.
+                  Note: you usually wrap it with a go() function.
   SIFS_SILFILE: 
                 $SIFS_SILFILE
                 - A file that records which sil files you have included into your
@@ -556,7 +559,7 @@ sifs.sys() {
   cd $SIFS_HOME
 }
 
-sifs.go() {
+sifs.dir() {
   test ! -d $SIFS_DIR && echo 'SIFS_DIR not set or not a directory.' && return 1
   cd $SIFS_DIR
 }
@@ -714,6 +717,58 @@ j() {
     test -n "$i" && sif $i && sifs.histfile $i
     break
   done
+}
+
+# Helper function for use in your sif files.
+
+# Find directory or file matching first several characters
+# in a given location.
+
+SIFS_GO=/tmp/$$.sifs.go.histfile
+
+sifs.go(){
+  test -z "$2" -a -z "$1" && \
+    echo "Usage: sifs.go <location> <pattern>" && \
+    return 1
+  test -z "$2" && cd "$1" && sifs.go.track $1 && return
+
+  # If you pass in full path as 2nd arg...
+  test -d $2 && cd $2 && sifs.go.track $2 && return
+  test -f $2 && $EDITOR $2 && sifs.go.track $2 && return
+
+  select i in $(find $1 -iname "$2*"|egrep -v '/\.' ); do
+    test -d $i -o -f $i && sifs.go.track $i
+    test -d $i && cd $i && return
+    test -f $i && $EDITOR $i && return
+    break
+  done
+}
+
+# Record entry made by sifs.go.
+
+sifs.go.track(){
+  touch $SIFS_GO
+  if test -e "$1"; then
+    grep -v "^${1}$" $SIFS_GO >$SIFS_GO.tmp
+    mv $SIFS_GO.tmp $SIFS_GO
+    echo $1 >> $SIFS_GO
+  fi
+}
+
+# Allow user to select from sifs.go history.
+
+sifs.go.select(){
+  touch $SIFS_GO
+  select i in $(tac $SIFS_GO); do
+    test -d $i -o -f $i && sifs.go.track $i
+    test -d $i && cd $i && return
+    test -f $i && $EDITOR $i && return
+    break
+  done
+}
+
+gohist(){
+  sifs.go.select
 }
 
 

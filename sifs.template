@@ -14,6 +14,10 @@ EOF
 }
 
 go() {
+  sifs.go $MY_HOME $1
+    # 'gohist' will allow you to select previous.
+  return
+  # Or, alternatively don't use sifs.go system:
   case "$1" in
   *) cd $MY_HOME ;;
   esac

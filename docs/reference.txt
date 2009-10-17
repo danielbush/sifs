@@ -72,8 +72,18 @@
 
   OTHER sifs.* FUNCTIONS
   -------------------------------------------------------------------------------
+  sifs.go <path> <pattern>   - look for file or dir with <pattern> under <path>
+                               Edit if file; cd if dir.
+                               Use in your own go() functions.
+                                 go() {
+                                   sifs.go $MY_HOME $1
+                                 }
+                               If <pattern> is a dir or path in its own right
+                               then <path> is ignored.
+  sifs.go.select             - select previous locations/files made with sifs.go.
+  gohist                     - a shortcut for sifs.go.select
   sifs.sys                   - cd to SIFS_HOME 
-  sifs.go                    - cd to SIFS_DIR  (if you want to delete a file etc) 
+  sifs.dir                   - cd to SIFS_DIR  (if you want to delete a file etc) 
   sifs.conf                  - Edit SIFS_CONF
   sifs.template              - Print sifs template to stdout
   sifs.template [file_name]  - Create a sif file using sifs template in current directory
