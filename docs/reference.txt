@@ -72,14 +72,22 @@
 
   OTHER sifs.* FUNCTIONS
   -------------------------------------------------------------------------------
-  sifs.go <path> <pattern>   - look for file or dir with <pattern> under <path>
+  sifs.go <path> <pattern> [<exclude-pattern>]
+                             - look for file or dir with <pattern> under <path>
                                Edit if file; cd if dir.
                                Use in your own go() functions.
                                  go() {
                                    sifs.go $MY_HOME $1
                                  }
-                               If <pattern> is a dir or path in its own right
+                               If <pattern> is a dir or path in its own right.
                                then <path> is ignored.
+                               'exclude-pattern' should be an extended regexp.
+                               By default, _SIFS_GO_EXCLUDE is used for
+                               'exclude-pattern'.
+                               You can override this by setting
+                               <exclude-pattern> in the above invocation
+                               or setting SIFS_GO_EXCLUDE in your sif or sil
+                               file.
   sifs.go.select             - select previous locations/files made with sifs.go.
   gohist                     - a shortcut for sifs.go.select
   sifs.sys                   - cd to SIFS_HOME 

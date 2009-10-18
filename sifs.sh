@@ -646,13 +646,15 @@ j() {
 # Helper function for use in your sif files.
 
 SIFS_GO=/tmp/$$.sifs.go.histfile
+_SIFS_GO_EXCLUDE="/\."
 
 # Find directory or file matching first several characters
 # in a given location.
 
 sifs.go(){
+  local exclude_pattern
   test -z "$2" -a -z "$1" && \
-    echo "Usage: sifs.go <location> <pattern>" && \
+    echo "Usage: sifs.go <location> <pattern> [<exclude-pattern>]" && \
     return 1
   test -z "$2" && cd "$1" && sifs.go.track $1 && return
 
@@ -660,7 +662,12 @@ sifs.go(){
   test -d $2 && cd $2 && sifs.go.track $2 && return
   test -f $2 && $EDITOR $2 && sifs.go.track $2 && return
 
-  select i in $(find $1 -iname "$2*"|egrep -v '/\.' ); do
+  test -n "$3" && exclude_pattern=$3 || exclude_pattern=$SIFS_GO_EXCLUDE
+  test -z "$exclude_pattern" && exclude_pattern=$_SIFS_GO_EXCLUDE
+
+  echo 'q to quit'
+  select i in $(find $1 -iname "*$2*"|egrep -v $exclude_pattern ); do
+    case "$REPLY" in q|Q) break;; esac
     test -d $i -o -f $i && sifs.go.track $i
     test -d $i && cd $i && return
     test -f $i && $EDITOR $i && return
