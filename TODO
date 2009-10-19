@@ -1,5 +1,15 @@
 DB
 
+19-Oct-09
+- cj, ej, ij
+  Jump to another sif file in SIFS_DIR.
+  When you're finished, type i to get back.
+  Similar to cl, el, il
+    cj twit  # loads SIFS_DIR/twitter.sif 
+    ...tweet...
+    i        # reload previous sif file
+    il       # or load local sif
+
 12-Oct-09
 - bookmark todo pattern
   provide a generalised version of the sifs histfile that

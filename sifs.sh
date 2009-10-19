@@ -647,12 +647,15 @@ j() {
 
 SIFS_GO=/tmp/$$.sifs.go.histfile
 _SIFS_GO_EXCLUDE="/\."
+SIFS_WENT=
+  # Record where sifs.go took us.
 
 # Find directory or file matching first several characters
 # in a given location.
 
 sifs.go(){
   local exclude_pattern
+  SIFS_WENT=
   test -z "$2" -a -z "$1" && \
     echo "Usage: sifs.go <location> <pattern> [<exclude-pattern>]" && \
     return 1
@@ -680,6 +683,8 @@ sifs.go(){
 sifs.go.track(){
   touch $SIFS_GO
   if test -e "$1"; then
+    SIFS_WENT=$1
+      # Record where we went to.
     grep -v "^${1}$" $SIFS_GO >$SIFS_GO.tmp
     mv $SIFS_GO.tmp $SIFS_GO
     echo $1 >> $SIFS_GO
