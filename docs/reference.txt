@@ -120,6 +120,12 @@
   this function.
   Or you could namespace the go function eg abc.go() and have
   your your normal sif go() function call abc.go().
+  Sil files are intended to be sourceable into your shell without
+  any side-effects or at least without any assumed interactivity.
+  The idea is you should be comfortable with sourcing a sil file
+  into a non-interactive script to provide functions for that 
+  script to operate.
+
 
   Try to keep your sil file names unique.  This way you can say
      sil <name>
