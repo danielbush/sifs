@@ -641,7 +641,7 @@ j() {
 }
 
 #------------------------------------------------------------------------
-# Sifs.go help function
+# Sifs.go helper functions
 #
 # Helper function for use in your sif files.
 
@@ -707,5 +707,28 @@ gohist(){
   sifs.go.select
 }
 
+
+
+#------------------------------------------------------------------------
+# Sifs.utils.* - helpful utilities
+#
+#
+
+sifs.utils.add-to-path() {
+  export OLDPATH=$PATH
+  if ! echo $PATH | grep -q "$1"; then
+    export PATH=$1:$PATH
+  fi
+}
+
+# Use only if you've run add-to-path and want to unset it
+# within a current interactive session.
+
+sifs.utils.reset-path() {
+  test -n "$OLDPATH" && export PATH=$OLDPATH && return 0
+}
+
+
+#------------------------------------------------------------------------
 
 sifs.init
