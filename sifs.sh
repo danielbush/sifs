@@ -216,8 +216,9 @@ sif() {
 sifs.find() {
   # Show the full directory path in case sif files have the same
   # file name.
-  #find -L $SIFS_ROOT_DIR -iname      "*$1*.sif" -type f | grep '\.sif$' | sed -e 's/\.sif$//'
-  find -L $SIFS_ROOT_DIR -iwholename "*$1*.sif" -type f | grep '\.sif$' | sed -e 's/\.sif$//'
+  local pattern=$1
+  test -z "$pattern" && pattern='.'
+  find -L $SIFS_ROOT_DIR -iname "*.sif" -type f | grep $pattern | grep '\.sif$' | sed -e 's/\.sif$//'
 }
 
 
@@ -382,12 +383,9 @@ sil() {
 }
 
 sil.find() {
-  #find -L $SIFS_ROOT_DIR -iwholename "*$1*.sil" -type f | grep '\.sil$' | sed -e 's/\.sil$//'
-  find -L $SIFS_ROOT_DIR -iname "*$1*.sil" -type f | grep '\.sil$' | sed -e 's/\.sil$//'
-    # Use -iname because we want to search purely on the sil name.
-    # I currently view sil files as a global collection of library routines.
-    # For the sif() function, it makes more sense to be able to search on 
-    # -iwholename.
+  local pattern=$1
+  test -z "$pattern" && pattern='.'
+  find -L $SIFS_ROOT_DIR -iname "*.sil" -type f | grep $1 | grep '\.sil$' | sed -e 's/\.sil$//'
 }
 
 sil.show() {
