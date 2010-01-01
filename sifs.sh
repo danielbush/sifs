@@ -385,7 +385,21 @@ sil() {
 sil.find() {
   local pattern=$1
   test -z "$pattern" && pattern='.'
-  find -L $SIFS_ROOT_DIR -iname "*.sil" -type f | grep $1 | grep '\.sil$' | sed -e 's/\.sil$//'
+  (find -L $SIFS_ROOT_DIR -iname "*.sil" -type f | grep '\.sil$' | egrep "^$1|\b$1" | sed -e 's/\.sil$//'
+  find -L $SIFS_ROOT_DIR -iname "*.sil" -type f | grep '\.sil$' | grep "$1" | sed -e 's/\.sil$//')|uniq
+    # What I'm trying to do here is to make the search result
+    # as relevant as possible by search for sil files with
+    # /<pattern> first, then <pattern>; ie when your <pattern> is
+    # small, you are more likely to type it completely.
+    #
+    # To make more efficient we could call 'find' once to a file
+    # and grep this file.  There is some underlying buffering going
+    # on anyway.
+}
+sil.find.all() {
+  local pattern=$1
+  test -z "$pattern" && pattern='.'
+  find -L $SIFS_ROOT_DIR -iname "*.sil" -type f | grep '\.sil$' | grep $1 | sed -e 's/\.sil$//'
 }
 
 sil.show() {
@@ -407,7 +421,7 @@ sil.edit() {
     test -z "$file" && echo "Can't find sil file." && return 1
     $EDITOR $file.sil
   else
-    select i in $(sil.find); do
+    select i in $(sil.find.all); do
       case $REPLY in q*) break;; esac
       $EDITOR $i.sil
     done
