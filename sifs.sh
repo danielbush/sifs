@@ -218,7 +218,7 @@ sifs.find() {
   # file name.
   local pattern=$1
   test -z "$pattern" && pattern='.'
-  find -L $SIFS_ROOT_DIR -iname "*.sif" -type f | grep $pattern | grep '\.sif$' | sed -e 's/\.sif$//'
+  find -L $SIFS_ROOT_DIR -iname "*.sif" -type f | grep -i $pattern | grep '\.sif$' | sed -e 's/\.sif$//'
 }
 
 
@@ -385,8 +385,8 @@ sil() {
 sil.find() {
   local pattern=$1
   test -z "$pattern" && pattern='.'
-  (find -L $SIFS_ROOT_DIR -iname "*.sil" -type f | grep '\.sil$' | egrep "^$1|\b$1" | sed -e 's/\.sil$//'
-  find -L $SIFS_ROOT_DIR -iname "*.sil" -type f | grep '\.sil$' | grep "$1" | sed -e 's/\.sil$//')|uniq
+  (find -L $SIFS_ROOT_DIR -iname "*.sil" -type f | grep '\.sil$' | egrep -i "^$1|\b$1" | sed -e 's/\.sil$//'
+  find -L $SIFS_ROOT_DIR -iname "*.sil" -type f | grep '\.sil$' | grep -i "$1" | sed -e 's/\.sil$//')|uniq
     # What I'm trying to do here is to make the search result
     # as relevant as possible by search for sil files with
     # /<pattern> first, then <pattern>; ie when your <pattern> is
@@ -399,7 +399,7 @@ sil.find() {
 sil.find.all() {
   local pattern=$1
   test -z "$pattern" && pattern='.'
-  find -L $SIFS_ROOT_DIR -iname "*.sil" -type f | grep '\.sil$' | grep $1 | sed -e 's/\.sil$//'
+  find -L $SIFS_ROOT_DIR -iname "*.sil" -type f | grep '\.sil$' | grep -i $1 | sed -e 's/\.sil$//'
 }
 
 sil.show() {
