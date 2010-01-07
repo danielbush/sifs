@@ -377,7 +377,7 @@ sil() {
     return 0
   fi
 
-  echo "Couldn't find sil file."
+  echo "Couldn't find sil file ($1)."
   return 1
 
 }
