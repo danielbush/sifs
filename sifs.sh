@@ -667,7 +667,10 @@ SIFS_WENT=
 
 sifs.go(){
   local exclude_pattern
+  local prog
+  prog=$3
   SIFS_WENT=
+  test -z "$prog" && $prog=$EDITOR
   test -z "$2" -a -z "$1" && \
     echo "Usage: sifs.go <location> <pattern> [<exclude-pattern>]" && \
     return 1
@@ -685,7 +688,7 @@ sifs.go(){
     case "$REPLY" in q|Q) break;; esac
     test -d $i -o -f $i && sifs.go.track $i
     test -d $i && cd $i && return
-    test -f $i && $EDITOR $i && return
+    test -f $i && $prog $i && return
     break
   done
 }
