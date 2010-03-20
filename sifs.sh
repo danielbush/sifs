@@ -665,20 +665,15 @@ SIFS_WENT=
 # Find directory or file matching first several characters
 # in a given location.
 
+# sifs.go <search-path> <pattern> <exclude-pattern>
+
 sifs.go(){
   local exclude_pattern
-  local prog
-  prog=$3
   SIFS_WENT=
-  test -z "$prog" && $prog=$EDITOR
-  test -z "$2" -a -z "$1" && \
-    echo "Usage: sifs.go <location> <pattern> [<exclude-pattern>]" && \
-    return 1
   test -z "$2" && cd "$1" && sifs.go.track $1 && return
 
   # If you pass in full path as 2nd arg...
   test -d $2 && cd $2 && sifs.go.track $2 && return
-  test -f $2 && $EDITOR $2 && sifs.go.track $2 && return
 
   test -n "$3" && exclude_pattern=$3 || exclude_pattern=$SIFS_GO_EXCLUDE
   test -z "$exclude_pattern" && exclude_pattern=$_SIFS_GO_EXCLUDE
@@ -686,9 +681,7 @@ sifs.go(){
   echo 'q to quit'
   select i in $(find $1 -iname "*$2*"|egrep -v $exclude_pattern ); do
     case "$REPLY" in q|Q) break;; esac
-    test -d $i -o -f $i && sifs.go.track $i
-    test -d $i && cd $i && return
-    test -f $i && $prog $i && return
+    test -d $i && cd $i && sifs.go.track $i && return
     break
   done
 }
