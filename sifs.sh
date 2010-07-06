@@ -656,9 +656,11 @@ sifs.histfile.edit() {
 }
 
 j() {
+  local i n;
+  n=$1
+  test -z "$1" && n=15
   echo "Type 'q' to quit"
-  local i;
-  select i in $(tac $SIFS_HISTFILE); do
+  select i in $(tac $SIFS_HISTFILE|head -n $n); do
     test -n "$i" && sif $i && sifs.histfile.track $i
     break
   done
