@@ -447,10 +447,11 @@ sil.add() {
 
 cl() {
   local i;
-  if test ! -d "$LOCAL_SIFS_ROOT"; then
-    echo "Using current directory for LOCAL_SIFS_ROOT"
-    LOCAL_SIFS_ROOT=$(pwd)
-  fi
+  #if test ! -d "$LOCAL_SIFS_ROOT"; then
+    #echo "Using current directory for LOCAL_SIFS_ROOT"
+    #LOCAL_SIFS_ROOT=$(pwd)
+  #fi
+  LOCAL_SIFS_ROOT=$(pwd)
 
   test -n "$1" && . $1 && LOCAL_SIF="$1" && return 0
 
@@ -462,8 +463,9 @@ cl() {
     case "$REPLY" in 
     q) break ;;
     esac
-    . $i
     LOCAL_SIF=$LOCAL_SIFS_ROOT/$i
+      # LOCAL_SIF should be available to $i
+    . $i
     break
   done
   popd >/dev/null
