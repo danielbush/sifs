@@ -447,6 +447,7 @@ sil.add() {
 
 cl() {
   local i;
+  echo "*** Type cl.info to view description of local sif files that set SIF_DESC."
   #if test ! -d "$LOCAL_SIFS_ROOT"; then
     #echo "Using current directory for LOCAL_SIFS_ROOT"
     #LOCAL_SIFS_ROOT=$(pwd)
@@ -469,6 +470,15 @@ cl() {
     break
   done
   popd >/dev/null
+}
+
+cl.info() {
+  local i
+  for i in $(find . -type f -name "*.sif"); do
+        echo "$(basename $i): "
+        grep '^SIF_DESC=' $i | sed -e 's/^SIF_DESC=//'
+        echo
+  done
 }
 
 
