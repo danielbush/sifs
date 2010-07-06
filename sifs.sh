@@ -729,6 +729,12 @@ sifs.utils.add-to-path() {
   fi
 }
 
+sifs.utils.prepend-to-var() {
+  var=$1; val=$2
+  eval "export OLD$var=\$var"
+  eval "if ! echo \$$var | grep -q \"\$val\"; then export $var=\$val:\$$var; fi"
+}
+
 # Use only if you've run add-to-path and want to unset it
 # within a current interactive session.
 
