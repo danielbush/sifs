@@ -507,7 +507,7 @@ el() {
 
 m() {
   case "$1" in
-  [a-z0-9A-Z]*) eval STASH_$1=$(pwd);;
+  [a-z0-9A-Z]*) eval STASH_$1="'$(pwd)'";;
   -) for i in $(set | grep '^STASH_' | sed -e 's/=.*$//'); do unset $i; done;;
   *) echo "Usage: m <char> where <char> might be a,b,c or 1,2,3 ... etc" 
      echo "If <char> is '-', settings will be cleared."
@@ -519,10 +519,10 @@ g() {
   "") set | grep '^STASH_' | sed -e 's/^STASH_//;s/=/: /' ;;
   *) if echo "$1" | egrep -q '^[0-9a-zA-Z_]+$'; then
        eval "_stash=\"\$STASH_$1\""
-       if test -n $_stash; then 
+       if test -n "$_stash"; then 
          STASH_LAST=$(pwd); 
          echo $_stash; 
-         cd $_stash; 
+         cd "$_stash"; 
        fi
      fi
   esac
